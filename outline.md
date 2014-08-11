@@ -41,7 +41,7 @@ Lecturers
 
  *  Prof. Colin Macdonald, Associate Professor in Numerical
     Methodologies, Tutorial Fellow at Oriel College, University of
-    Oxford.
+    Oxford.  email: macdonald@maths.ox.ac.uk
 
  *  Dr Martin Robinson, Postdoctoral Research Fellow, Mathematical
     Institute, University of Oxford.
