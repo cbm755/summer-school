@@ -69,7 +69,11 @@ Website
 
 There may be various material online.  Start looking here:
 
-[people.maths.ox.ac.uk/macdonald/CBL](http://people.maths.ox.ac.uk/macdonald/CBL)
+* [people.maths.ox.ac.uk/macdonald/CBL](http://people.maths.ox.ac.uk/macdonald/CBL)
+
+* [github.com/cbm755/summer-school](https://github.com/cbm755/summer-school)
+
+
 
 
 
