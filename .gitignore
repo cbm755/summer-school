@@ -1,0 +1,16 @@
+# compiled files, shared objects, temp files etc
+*.pyc
+*.pyo
+*.so
+*.log
+*.aux
+*.out
+*.dvi
+*.ps
+
+# pdf files by default (doesn't stop you from manually adding an particular figure or whatever)
+*.pdf
+
+# temporary files
+*~
+\#*#
