@@ -1,0 +1,202 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Loading and displaying images in Matlab</title><meta name="generator" content="MATLAB 8.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-08-13"><meta name="DC.source" content="images.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Loading and displaying images in Matlab</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load image</a></li><li><a href="#2">Display image</a></li><li><a href="#3">Color image</a></li><li><a href="#4">Convert datatype to double</a></li><li><a href="#5">Add noise</a></li></ul></div><h2>Load image<a name="1"></a></h2><p>A = <b>imread</b>(FILENAME,FMT) reads a grayscale or color image from the file specified by the string FILENAME.</p><p>The text string FMT specifies the format of the file by its standard file extension. For example, specify 'gif' for Graphics Interchange Format files.</p><p>The return value A is an uint8 array containing the image data.</p><pre class="codeinput">u_int8_gray = imread(<span class="string">'lena1.bmp'</span>);
+u_int8_color = imread(<span class="string">'lena3.tif'</span>);
+</pre><h2>Display image<a name="2"></a></h2><p>Use either <b>imagesc</b> or <b>imshow</b> to display images</p><p><b>imshow</b>(I) displays a grayscale or truecolor image <b>imagesc</b>(I) is similar, but scales the pixel values to use the full colormap</p><p>We will use <b>figure</b>(H) to open a new plotting window, where H is an integer representing the id, or handle of the window.</p><p>We will show the result result of <b>imshow</b> and <b>imagesc</b> in separate subplots. H = <b>subplot</b>(m,n,p), breaks the Figure window into an m-by-n matrix of small axes, selects the p-th axes for the current plot, and returns the axes handle.</p><pre class="codeinput">figure(1)
+subplot(2,2,1)
+imshow(u_int8_gray)
+subplot(2,2,2)
+imagesc(u_int8_gray)
+subplot(2,2,3)
+imshow(u_int8_color)
+subplot(2,2,4)
+imagesc(u_int8_color)
+</pre><img vspace="5" hspace="5" src="images_01.png" alt=""> <h2>Color image<a name="3"></a></h2><p>color images of size NxM are contained in matricies with size NxMx3 where the last dimension is the different channels (Red, Green and Blue)</p><pre class="codeinput">figure(2)
+subplot(2,3,1)
+imshow(u_int8_color(:,:,1))
+title(<span class="string">'red'</span>)
+subplot(2,3,2)
+imshow(u_int8_color(:,:,2))
+title(<span class="string">'green'</span>)
+subplot(2,3,3)
+imshow(u_int8_color(:,:,3))
+title(<span class="string">'blue'</span>)
+
+subplot(2,3,4)
+imshow(rgb2gray(u_int8_color))
+title(<span class="string">'greyscale'</span>)
+subplot(2,3,5)
+imshow(u_int8_color)
+title(<span class="string">'color'</span>)
+</pre><img vspace="5" hspace="5" src="images_02.png" alt=""> <h2>Convert datatype to double<a name="4"></a></h2><p>Convert image matrix to the double datatype. pixel values can now be represented as real numbers instead of integers</p><pre class="codeinput">u = double(u_int8);
+</pre><h2>Add noise<a name="5"></a></h2><p>We artificially add some noise to the image using normrnd</p><pre>normrnd Random arrays from the normal distribution.
+   R = normrnd(MU,SIGMA) returns an array of random numbers chosen from a
+   normal distribution with mean MU and standard deviation SIGMA.  The size
+   of R is the common size of MU and SIGMA if both are arrays.  If either
+   parameter is a scalar, the size of R is the size of the other
+   parameter.</pre><pre>   R = normrnd(MU,SIGMA,M,N,...) or R = normrnd(MU,SIGMA,[M,N,...])
+   returns an M-by-N-by-... array.</pre><pre>   See also normcdf, normfit, norminv, normlike, normpdf, normstat,
+   random, randn.</pre><p>We add normal noise with mean 0 and variance 20</p><pre class="codeinput">u = u + normrnd (0, 20, size(u));
+figure(3)
+imshow(uint8(u))
+</pre><img vspace="5" hspace="5" src="images_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Loading and displaying images in Matlab
+%
+
+%% Load image
+% A = *imread*(FILENAME,FMT) reads a grayscale or color image from the file
+% specified by the string FILENAME. 
+%     
+% The text string FMT specifies the format of the file by its standard
+% file extension. For example, specify 'gif' for Graphics Interchange 
+% Format files.
+%  
+% The return value A is an uint8 array containing the image data.
+
+u_int8_gray = imread('lena1.bmp');
+u_int8_color = imread('lena3.tif');
+
+
+%% Display image
+% Use either *imagesc* or *imshow* to display images
+%
+% *imshow*(I) displays a grayscale or truecolor image
+% *imagesc*(I) is similar, but scales the pixel values to use the full
+% colormap
+%
+% We will use *figure*(H) to open a new plotting window, where H is an 
+% integer representing the id, or handle of the window. 
+% 
+% We will show the result result of *imshow* and *imagesc* in separate 
+% subplots.
+% H = *subplot*(m,n,p), breaks the Figure window into an m-by-n matrix of 
+% small axes, selects the p-th axes for the current plot, and returns the 
+% axes handle.
+
+figure(1)
+subplot(2,2,1)
+imshow(u_int8_gray)
+subplot(2,2,2)
+imagesc(u_int8_gray)
+subplot(2,2,3)
+imshow(u_int8_color)
+subplot(2,2,4)
+imagesc(u_int8_color)
+
+%% Color image
+% color images of size NxM are contained in matricies with size NxMx3
+% where the last dimension is the different channels (Red, Green and Blue)
+
+figure(2)
+subplot(2,3,1)
+imshow(u_int8_color(:,:,1))
+title('red')
+subplot(2,3,2)
+imshow(u_int8_color(:,:,2))
+title('green')
+subplot(2,3,3)
+imshow(u_int8_color(:,:,3))
+title('blue')
+
+subplot(2,3,4)
+imshow(rgb2gray(u_int8_color))
+title('greyscale')
+subplot(2,3,5)
+imshow(u_int8_color)
+title('color')
+%% Convert datatype to double
+% Convert image matrix to the double datatype. pixel values can now be
+% represented as real numbers instead of integers
+u = double(u_int8);
+
+%% Add noise
+% We artificially add some noise to the image using normrnd
+%
+%  normrnd Random arrays from the normal distribution.
+%     R = normrnd(MU,SIGMA) returns an array of random numbers chosen from a
+%     normal distribution with mean MU and standard deviation SIGMA.  The size
+%     of R is the common size of MU and SIGMA if both are arrays.  If either
+%     parameter is a scalar, the size of R is the size of the other
+%     parameter.
+%  
+%     R = normrnd(MU,SIGMA,M,N,...) or R = normrnd(MU,SIGMA,[M,N,...])
+%     returns an M-by-N-by-... array.
+%  
+%     See also normcdf, normfit, norminv, normlike, normpdf, normstat,
+%     random, randn.
+%
+% We add normal noise with mean 0 and variance 20
+
+u = u + normrnd (0, 20, size(u));
+figure(3)
+imshow(uint8(u))
+
+
+##### SOURCE END #####
+--></body></html>

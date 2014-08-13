@@ -1,0 +1,393 @@
+\documentclass[11pt,a4paper,noindent]{article}
+\usepackage{graphicx,amsmath,amsfonts,amssymb,amsthm}
+\usepackage{fullpage}
+\usepackage{exercise}
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\begin{document}
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    basicstyle=\small,
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+
+\title{PDEs for Image Processing}
+\date{August 15, 2014}
+\author{Martin Robinson}
+
+\maketitle
+
+%\section{Separation of Variables - ODE versus PDE}
+%An ordinary differential equation is an equation containing a single variable and its derivatives. For example
+%$$
+%\frac{d}{dt} f(t) = g(t) h(f(t))
+%$$
+%If we define $y = f(t)$, then we can separate $x$ and $y$ to either side of the equation
+%$$
+%\frac{1}{h(y)}dy = g(t) dt
+%$$
+%If we are given the functions $h$ and $g$, then we can (possibly) integrate both sides to find a solution.
+%
+%We can take a simple example where $g(t) = 1$ and $h(y) = ky$
+%$$
+%\frac{dy}{dt} = ky \\
+%$$
+%This is separated into 
+%$$
+%\frac{1}{y} dy = k dt
+%$$
+%Taking the integral of both sides and using initial condition $y(0) = y_0$ gives
+%$$
+%y(t) = y_0 e^{kt}
+%$$
+
+\section{Image Domain}
+A grey-scale image is simply a two dimensional $NxM$ array of pixel values $u_{i,j}$, where $i \in {1\ldots L_x}$ and $j \in {1\ldots L_y}$. However, we can also consider that $u_{i,j}$ are samples of some continuous function $u(x,y)$ defined on the domain $(x,y) \in \Omega \subset \mathbb{R}^+$, where $\mathbb{R}^+$ is the set of positive real numbers. For the sake of simplicity, we set the domain so that $\Omega = \{x,y \in \mathbb{R}^+: x < L_x \wedge y < L_y\}$, so that the distances between neighbouring pixels will be equal to 1.
+
+In this case, an image consists of samples from this continuous function
+
+\begin{align}
+u_{ij} = u(\mathbf{x}_{i,j}) \\
+\mathbf{x}_{i,j} = \begin{pmatrix} i-0.5 \\ j-0.5 \end{pmatrix}
+\end{align}
+
+We can consider a "real" image to consist of both a source term $u$, which we are trying to recover, and an additive noise term $n$
+
+\begin{equation}
+u_{i,j} = u(\mathbf{x}_{i,j}) + n(\mathbf{x}_{i,j})
+\end{equation}
+
+The problem then becomes the recovery of the source term $u$ from the set of pixel values $u_{i,j}$. That is, we need to construct some sort of operator to remove the noise term $n$.
+
+\section{Signal Processing - Low-Pass Filtering}
+
+Assuming that the noise term is comprised of mainly high frequency terms and the source term is mainly low frequency terms, one might use a low-pass filter to (approximately) recover the source term.
+
+A low-pass filter is a filter that removes or attenuates some of the higher frequency components of the original signal. The main parameter to the low-pass filter is the \emph{cut-off} frequency, above which most of the attenuation is performed.
+
+A low-pass filter can be implemented by convolution of the pixel values by a function $f$. In one dimension and in an infinite domain, the convolution operator is defined as
+
+\begin{equation}
+(f \star u)(x) = \int_{-\infty}^{\infty} f(x-x')u(x')dx'
+\end{equation}
+
+%The discrete convolution is given by
+%
+%\begin{equation}
+%(f \star u)_{i} = \sum_{n=-\inf}^{\inf} f_{i-n} u_{n}
+%\end{equation}
+
+A common low-pass filter is the \emph{Gaussian} filter, which uses a gaussian function for $f$
+
+\begin{equation}
+f(x) = \frac{1}{\sqrt{2 \pi} \sigma} e^{-\frac{x^2}{2\sigma^2}}
+\end{equation}
+
+We can examine the frequency response of the gaussian filter by considering its \emph{fourier transform} ($\mathcal{F}(f) = \hat{f}$), defined as
+
+\begin{equation}
+\hat{f}(k) = \int_{-\infty}^{\infty} f(x) e^{-ikx} dx,
+\end{equation}
+
+where $k$ is the mode frequency in units of radians per unit length. Note that this integral only converges if $f(x) \rightarrow 0$ fast enough as $x \rightarrow  \pm \infty$. This transforms our original function from the spatial domain ($x$) to the frequency domain ($k$). It is equivilent to the fourier series in the limit of infinite domain size $L \rightarrow \infty$. The original function can be recovered by the inverse fourier transform
+
+\begin{equation}
+f(x) = \frac{1}{2\pi} \int_{-\infty}^{\infty} \hat{f}(x) e^{ikx} dk.
+\end{equation}
+
+\subsubsection*{Some fourier transform properties}
+\begin{enumerate}
+\item $\mathcal{F}$ is a linear operator: $\mathcal{F}\{af + bg\} = a\mathcal{F}\{f\} + b\mathcal{F}\{g\}$
+\item Shift property: $\mathcal{F}\{f(x+a)\} = e^{ika} \hat{f}(k).$
+\begin{equation}
+\mathcal{F}{f(x+a)} = \int_{-\infty}^{\infty} f(x+a) e^{-ikx} dx
+ 				    = \int_{-\infty}^{\infty} f(x') e^{ika} e^{-ikx'} dx'
+ 				   = e^{ika} \hat{f}(k).
+\end{equation}
+\item Derivative property: $\mathcal{F}\{\frac{df}{dx}\} = ik \hat{f}(k).$
+\begin{equation}
+\mathcal{F}{\frac{df}{dx}} = \int_{-\infty}^{\infty} \frac{df}{dx} e^{-ikx} dx
+= \left[f(x)e^{-ikx}\right]^\infty_{-\infty}+ik\int_{-\infty}^{\infty}f(x)e^{-ikx}dx
+ 				   = ik\hat{f}(k).
+\end{equation}
+\item Convolution property: $\mathcal{F}\{f(x) \star g(x)\} = \hat{f}(k)\hat{g}(k)$
+\begin{align}
+\mathcal{F}{f \star g} &= \int_{-\infty}^{\infty} \left [ \int_{-\infty}^{\infty} f(x-x')g(x')dx' \right ] e^{-ikx} dx \\
+&= \int_{-\infty}^{\infty} g(x') e^{-ikx'} \left [ \int_{-\infty}^{\infty} f(x-x')e^{-ik(x-x')}dx \right ]  dx' \\
+&= \int_{-\infty}^{\infty} g(x') e^{-ikx'} \left [ \int_{-\infty}^{\infty} f(x-x')e^{-ik\xi}d\xi \right ]  dx' \\
+&= \hat{f}(k)\hat{g}(k)
+\end{align}
+
+\item Fourier transform of gaussian: $\hat{f}(k) = e^{-\frac{f^2}{2\sigma^2_f}}$
+\begin{align}
+\hat{f}(k) &= \int_{-\infty}^{\infty}  e^{-\frac{x^2}{2\sigma^2}} e^{-ikx} dx \\
+\frac{d}{dk} \hat{f}(k) &=  \int_{-\infty}^{\infty}  e^{-\frac{x^2}{2\sigma^2}} (-ix) e^{-ikx} dx \\
+&= i\sigma^2 \int_{-\infty}^{\infty}  \left(\frac{d}{dx} e^{-\frac{x^2}{2\sigma^2}}\right)  e^{-ikx} dx \\
+&= -k\sigma^2 \int_{-\infty}^{\infty}  e^{-\frac{x^2}{2\sigma^2}} e^{-ikx} dx \\
+&= -k\sigma^2 \hat{f}(k)
+\end{align}
+Therefore
+\begin{equation}
+\hat{f}(k) = C e^{-\frac{k^2}{2\sigma^2}}
+\end{equation}
+where the constant $C$ is determined using $C = \hat{f}(0) = \int_{-\infty}^{\infty} \frac{1}{\sqrt{2\pi} \sigma} e^{-\frac{x^2}{2\sigma^2}} dx$ so that $C = 1$
+\end{enumerate}
+
+Using the convolution property and the fourier transform of a guassian, it can be seen that the application of a gaussian filter attenuates the frequency components of the original image by a gaussian. i.e. a low-pass filter
+
+\begin{equation}
+\hat{f}(k) = e^{-\frac{k^2}{2\sigma^2}}
+\end{equation}
+
+\section{Heat Equation}
+
+Another option is to remove the noise term by applying a numerical discritisation of the \emph{diffusion equation}. As we will see, this is equivalent to the gaussian filter, but has the advantage that we can easily modify the equation to, for example, recover edges in the image.
+
+The diffusion, or heat equation in one-dimension is given by
+
+\begin{equation}\label{eq:diffusion}
+\left\lbrace \begin{array}{c}
+u_t(x,t) = D u_{xx}(x,t) \\
+u(x,0) = u_0(x)
+\end{array}
+\right.
+\end{equation}
+
+where $D$ is the diffusion constant, $u_t(x,t)=\frac{\partial}{\partial t} u(x,t)$ and $u_{xx}(x,t) =  \frac{\partial^2}{\partial^2 x} u(x,t)$. You can see that the speed of evolution $u_t$ is proportional to the concavity $u_{xx}$. In other words, small features with high $u_{xx}$ (i.e. noise) will be smoothed out first.
+
+\subsection{Fundamental Solution}
+
+We can consider the heat equation on an infinite domain $-\infty < x < \infty$ where the function $u$ decays to zero towards infinity: $u(x,t) \rightarrow 0$ as $x \rightarrow \pm \infty$
+
+Take the fourier transform of both sides
+\begin{align}
+\mathcal{F}\{u_t(x,t)\} &= \mathcal{F}\{D u_{xx}(x,t)\} \\
+\frac{\partial}{\partial t} \int_{-\infty}^{\infty} f(x) e^{-ikx} dx &= D (ik) \hat{u_x} \\
+ \int_{-\infty}^{\infty} \frac{\partial}{\partial t}f(x) e^{-ikx} dx &= D (ik)^2 \hat{u} \\
+\hat{u}_t &= -D k^2 \hat{u}, \\
+\end{align}
+using the derivative property of the fourier transform and the fact that partial derivative of $t$ does not interfere with the transform. Using this result, we can see that the solution for $\hat{u}(k,t)$ is
+\begin{equation}
+\hat{u}(k) = C(k) e^{-k^2Dt},
+\end{equation}
+where the constant $C$ can be determined from the fourier transform of the initial conditions
+\begin{equation}
+\hat{u}(k,0) = \hat{u}_0(k) = C(k)
+\end{equation}
+giving
+\begin{equation}
+\hat{u}(k,t) = \hat{u}_0(k) e^{-k^2Dt},
+\end{equation}
+This can be written as
+\begin{equation}
+\hat{u}(k,t) = \hat{u}_0(k) \mathcal{F} \left( \frac{e^{-x^2/4Dt}}{\sqrt{4\pi Dt}} \right)
+\end{equation}
+Using the convolution property of the fourier transform, we can see that the inverse fourier transform of both sides gives
+
+\begin{equation}
+u(x,t) = \frac{1}{\sqrt{4 \pi D t}}  \int_{-\infty}^{\infty} u_0(x') e^{-\frac{(x-x')^2}{4Dt}} dx'
+\end{equation}
+where
+\begin{equation}
+G(x,t) = \frac{1}{\sqrt{4 \pi D t}}  e^{-\frac{x^2}{4Dt}}
+\end{equation}
+is the Green function, or fundamental solution, to the heat equation. Note that this is the same as the gaussian low-pass filter with $\sigma = \sqrt{2Dt}$.
+
+%We want to find a solution to the heat equation that is the convolution of some function $G(x,y)$ with the initial condition $u_0(x)$
+%
+%\begin{equation} \label{eq:fundsol}
+%u(x,t) = \int_{-\infty}^{\infty} G(x-y,t)u_0(y)dy
+%\end{equation}
+%
+%Substitute Eq. \ref{eq:fundsol} back into Eq. \ref{eq:diffusion}
+%
+%\begin{equation}
+%u_t(x,t) - D u_{xx}(x,t) = \int_{-\infty}^{\infty} (G_t(x-y,t) - D G_{xx}(x-y,t)) u_0(y) dy
+%\end{equation}
+%
+%So if $G(x,t)$ is a solution of the heat equation, then we can see that Eq. \ref{eq:fundsol} will be as well.
+%
+%To find $G(x,t)$, we need to ensure that the solution $u(x,t)$ approaches the initial condition as $t\rightarrow 0^+$, that is $\lim_{t\rightarrow 0^+} u(x,t) = u_0(x)$. It turns out that
+%
+%\begin{equation}
+%G(x,t) = \frac{1}{\sqrt{4 \pi D t}}e^{-\frac{x^2}{4kt}}
+%\end{equation}
+%
+%This is the Green function, or fundamental solution, to the heat equation. Note that this is the same as the gaussian low-pass filter with $\omega = \sqrt{2Dt}$.
+%
+%\begin{Exercise}
+%Verify that $G(x,t)$ is a solution of the heat equation and show informally that $\lim_{t\rightarrow 0^+} \int_{-\infty}^{\infty} G(x-y,t)u_0(y)dy = u_0(x)$
+%\end{Exercise}
+
+\subsection{Finite Differences}
+\subsubsection{Forward Time, Central Space}
+We will approximate the solution to the heat equation using finite differences, using a forward time, central space method.
+
+First we calculate the time derivative using a forward difference
+\begin{equation}
+u_t(x_{i},t_n) \approx \frac{u^{n+1}_i-u^{n}_i}{\Delta t}
+\end{equation}
+where $t_n = \Delta t n$ for the set of positive integers $n = 0,\ldots, N$ and $x_i = i-0.5$ for the set of positive integers $i = 1, \ldots, L$. Note that this gives a simple grid spacing $\Delta x = 1$.
+
+We approximate $u_{xx}$ using a central difference
+\begin{equation}
+u_{xx}(x_i,t_n) \approx \frac{1}{{\Delta x}^2} (u^n_{i+1} - 2u^n_{i} + u^n_{i-1}) = u^n_{i+1} - 2u^n_{i} + u^n_{i-1}
+\end{equation}
+
+Putting these into the heat equation gives
+\begin{align} \label{eq:finitedifference}
+\frac{u^{n+1}_i-u^{n}_i}{\Delta t} &= D (u^n_{i+1} - 2u^n_{i} + u^n_{i-1}) \\
+u^{n+1}_i &= u^{n}_i + \Delta t D (u^n_{i+1} - 2u^n_{i} + u^n_{i-1}) \\
+u^{n+1}_i &= \Delta t D u^n_{i+1} + (1-2\Delta t D)u^n_{i} + \Delta t D u^n_{i-1}
+\end{align}
+
+\subsubsection{Boundary Conditions}
+We set our domain for $x$ to be $0 < x < L$, and set boundary conditions at $x=0$ and $x=L$.
+
+A Dirichlet boundary condition gives the value of the function $u(x)$ at the boundary. For image processing, we might want to set a dirichlet boundary condition as the initial pixel values at the edges.
+\begin{align}
+u(0,t) = u_0(0)\\
+u(L,t) = u_0(L).
+\end{align}
+
+A Neumann boundary condition gives the derivative $\partial / \partial x$ of the function $u(x)$ at the boundary. A zero-Neumann b.c. is often used to ensure that the gradient of the image pixels at the boundary is zero. 
+
+\begin{align}
+\frac{\partial u}{\partial x}(0)=0\\
+\frac{\partial u}{\partial x}(L)=0
+\end{align}
+
+This could be implemented, for example, by having a set of "mirror" pixels surrounding the image.
+
+\begin{align}
+u_{0,j} &= u_{1,j}\\
+u_{L+1,j} &= u_{L,j}
+\end{align}
+
+
+\subsubsection{Matlab Code}
+We can write Matlab code to calculate this, using a zero-neumann boundary condition.
+
+\begin{lstlisting}
+function u = isotropic_diffusion(u, dtD, N)
+
+  % Get size of initial condition matrix
+  nx = size(u);
+
+  % Setup indexing. We don't update the boundary pixels, as they are set by
+  % the boundary conditions
+  j=2:nx-1;
+  
+  % Loop through timesteps
+  for it=1:N
+      % Use Forward Time, Centered Space
+      u(i,j)= dtD*(u(i+1)+u(i-1)) + (1-2*dtD)*u(i);
+      
+      % Zero-neumann boundary conditions
+      u(1) = u(2);
+      u(nx) = u(nx-1);
+  end
+end
+\end{lstlisting}
+
+%\subsection{Error}
+%The error of the finite difference approximation is given by
+%\begin{equation} \label{eq:error}
+%E_i^n = \frac{u(x_i,t^{n+1})-u(x_i,t^{n})}{\Delta t} - D (u(x_{i+1},t^{n}) - 2u(x_{i1},t^{n}) + u(x_{i-1},t^{n})
+%\end{equation}
+%We then use the taylor expansion around $u_i^n$
+%\begin{align}
+%u(x_i,t_{n+1}) &= u(x_i,t_{n}) + \Delta t u_t(x_i,t_{n}) + \frac{1}{2} \Delta t^2 u_{tt}(x_i,t_{n}) + \ldots \\
+%u(x_{i+1},t_{n}) &= u(x_i,t_{n}) + u_x(x_i,t_n) + \frac{1}{2} u_{xx}(x_i,t_{n}) + \ldots
+%\end{align}
+%Substituting this back into Eq. \ref{eq:error} gives
+%\begin{equation}
+%E_i^n = \frac{1}{2} \Delta t u_{tt}(x_i,t_{n}) + \mathcal{O}(\Delta t^2) - \frac{1}{12} h^2 u_{xxxx}(x_i,t_{n}) + \mathcal{O}(\Delta h^4)
+%\end{equation}
+
+\subsubsection{Stability}
+The error of the finite difference approximation is given by
+\begin{equation} \label{eq:error}
+E_i^n = \frac{u(x_i,t^{n+1})-u(x_i,t^{n})}{\Delta t} - D (u(x_{i+1},t^{n}) - 2u(x_{i1},t^{n}) + u(x_{i-1},t^{n})
+\end{equation}
+Let $e_i^n = u_i^n - u(x_i,t_{n})$, then subtracting Eq. \ref{eq:error} from Eq. \ref{eq:finitedifference} gives
+\begin{equation}
+E_i^n = \frac{e^{n+1}_i-e^{n}_i}{\Delta t} - D (e^n_{i+1} - 2e^n_{i} + e^n_{i-1})
+\end{equation}
+and
+\begin{equation}
+e^{n+1}_i = r e^n_{i+1} + (1-2r)e^n_{i} + r e^n_{i-1} - \Delta t E_i^n
+\end{equation}
+let $e^n = max_i|e_i^n|$ and assume $1-2r\geq 0$
+\begin{equation}
+|e_i^n| \geq (1-2r)e^n + re^n + re^n + \Delta t |E_i^n|
+\end{equation}
+or
+\begin{equation}
+|e_i^n| \geq e^n + \Delta t |E_i^n|
+\end{equation}
+We assume that $e_0=0$, and with $E = \max_{i,n}|E_i^n|$
+\begin{align}
+|e_i^n| &\geq e^n + \Delta t E \geq e^{n-1} + 2\Delta t E \geq e^{n-2} + 3\Delta t E \geq \ldots \\
+|e_i^n| &\geq (n+1)\Delta t E = t_{n+1} E
+\end{align}
+We know that the approximation is first order in time, therefore $E \leq C \Delta t$ and
+\begin{equation}
+|e_i^n| \geq t_{n+1}\Delta t C
+\end{equation}
+Take the limit as $n \rightarrow \infty$, $\Delta t \rightarrow 0$ and $t_n \rightarrow t$
+\begin{equation}
+|e_i^n| \geq t E \rightarrow 0
+\end{equation}
+Therefore the scheme converges for $1-2r\geq 0$
+
+\subsection{2D Heat Equation}
+The two-dimensional version of the heat equation is given as
+\begin{equation}\label{eq:diffusion2}
+\left\lbrace \begin{array}{c}
+u_t(x,y,t) = D (u_{xx}(x,y,t) + u_{xx}(x,y,t)) \\
+u(x,y,0) = u_0(x,y)
+\end{array}
+\right.
+\end{equation}
+
+\subsubsection{Finite Differences: Forward Time, Central Space}
+We will approximate the solution to the heat equation using finite differences, using a forward time, central space method.
+
+The time derivative is unchanged from 1 dimension:
+\begin{equation}
+u_t(x_{i},y_{j},t_n) \approx \frac{u^{n+1}_{i,j}-u^{n}_{i,j}}{\Delta t}
+\end{equation}
+where $t_n = \Delta t n$ for the set of positive integers $n = 0,\ldots, N$, $x_i = i-0.5$ for the set of positive integers $i = 1, \ldots, L$ and $y_j = j-0.5$ for the set of positive integers $j = 1, \ldots, L$.
+
+We approximate $u_{xx}$ and $u_{yy}$ using a central difference
+\begin{align}
+u_{xx}(x_{i},y_{j},t_n) &\approx \frac{1}{{\Delta x}^2} (u^n_{i+1,j} - 2u^n_{i,j} + u^n_{i-1,j}) = u^n_{i+1,j} - 2u^n_{i,j} + u^n_{i-1,j} \\
+u_{yy}(x_{i},y_{j},t_n) &\approx \frac{1}{{\Delta y}^2} (u^n_{i,j+1} - 2u^n_{i,j} + u^n_{i,j-1}) = u^n_{i,j+1} - 2u^n_{i,j} + u^n_{i,j-1} \\
+\end{align}
+
+Putting these into the heat equation gives
+\begin{align} \label{eq:finitedifference}
+\frac{u^{n+1}_{i,j}-u^{n}_{i,j}}{\Delta t} &= D (u^n_{i+1,j} + u^n_{i-1,j} + u^n_{i,j+1} + u^n_{i,j-1} - 4u^n_{i,j}) \\
+u^{n+1}_i &= u^{n}_i + \Delta t D (u^n_{i+1,j} + u^n_{i-1,j} + u^n_{i,j+1} + u^n_{i,j-1} - 4u^n_{i,j}) \\
+u^{n+1}_i &= \Delta t D (u^n_{i+1,j} + u^n_{i-1,j} + u^n_{i,j+1} + u^n_{i,j-1}) + (1-4\Delta t D)u^n_{i,j}
+\end{align}
+
+Heat equation is linear, so the same arguments for accuracy and stability in 1D also apply for 2D.
+
+\end{document}
