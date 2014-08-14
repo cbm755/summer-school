@@ -65,7 +65,7 @@ title('color')
 %% Convert datatype to double
 % Convert image matrix to the double datatype. pixel values can now be
 % represented as real numbers instead of integers
-u = double(u_int8);
+u = double(u_int8_gray);
 
 %% Add noise
 % We artificially add some noise to the image using normrnd
