@@ -4,7 +4,7 @@ u = double(imread('squares.bmp'));
 
 %%
 % Add normal noise with mean 0 and variance 10
-u = u + normrnd (0, 10, size(u));
+u = u + 10.0*randn (size(u));
 
 %%
 % Display "before" image

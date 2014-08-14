@@ -70,22 +70,16 @@ u = double(u_int8);
 %% Add noise
 % We artificially add some noise to the image using normrnd
 %
-%  normrnd Random arrays from the normal distribution.
-%     R = normrnd(MU,SIGMA) returns an array of random numbers chosen from a
-%     normal distribution with mean MU and standard deviation SIGMA.  The size
-%     of R is the common size of MU and SIGMA if both are arrays.  If either
-%     parameter is a scalar, the size of R is the size of the other
-%     parameter.
-%  
-%     R = normrnd(MU,SIGMA,M,N,...) or R = normrnd(MU,SIGMA,[M,N,...])
-%     returns an M-by-N-by-... array.
-%  
-%     See also normcdf, normfit, norminv, normlike, normpdf, normstat,
-%     random, randn.
+%   randn Normally distributed pseudorandom numbers.
+%     R = randn(N) returns an N-by-N matrix containing pseudorandom values drawn
+%     from the standard normal distribution.  randn(M,N) or randn([M,N]) returns
+%     an M-by-N matrix. randn(M,N,P,...) or randn([M,N,P,...]) returns an
+%     M-by-N-by-P-by-... array. randn returns a scalar.  randn(SIZE(A)) returns
+%     an array the same size as A.
 %
 % We add normal noise with mean 0 and variance 20
 
-u = u + normrnd (0, 20, size(u));
+u = u + 20.0*randn (size(u));
 figure(3)
 imshow(uint8(u))
 

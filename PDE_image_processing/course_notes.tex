@@ -133,7 +133,7 @@ f(x) = \frac{1}{2\pi} \int_{-\infty}^{\infty} \hat{f}(x) e^{ikx} dk.
 &= \hat{f}(k)\hat{g}(k)
 \end{align}
 
-\item Fourier transform of gaussian: $\hat{f}(k) = e^{-\frac{f^2}{2\sigma^2_f}}$
+\item Fourier transform of gaussian: $\hat{f}(k) = e^{-\frac{k^2}{2\sigma^2}}$
 \begin{align}
 \hat{f}(k) &= \int_{-\infty}^{\infty}  e^{-\frac{x^2}{2\sigma^2}} e^{-ikx} dx \\
 \frac{d}{dk} \hat{f}(k) &=  \int_{-\infty}^{\infty}  e^{-\frac{x^2}{2\sigma^2}} (-ix) e^{-ikx} dx \\
@@ -149,10 +149,6 @@ where the constant $C$ is determined using $C = \hat{f}(0) = \int_{-\infty}^{\in
 \end{enumerate}
 
 Using the convolution property and the fourier transform of a guassian, it can be seen that the application of a gaussian filter attenuates the frequency components of the original image by a gaussian. i.e. a low-pass filter
-
-\begin{equation}
-\hat{f}(k) = e^{-\frac{k^2}{2\sigma^2}}
-\end{equation}
 
 \section{Heat Equation}
 
