@@ -1,10 +1,10 @@
-%% Isotropic diffusion for image processing 1
+%% Isotropic diffusion for image processing 4
 % Read image and convert to double
 u = double(imread('squares.bmp'));
 
 %%
 % Add normal noise with mean 0 and variance 10
-u = u + 10.0*randn (size(u));
+u = u + 20.0*randn (size(u));
 
 %%
 % Display before image
@@ -22,8 +22,8 @@ ylabel('u')
 %%
 % Run diffusion
 dt = 0.1;
-D = 1;
-u = isotropic_diffusion(u, dt*D, 10);
+f = @(x,y) 1-sin(pi*x).*sin(pi*y);
+u = varying_diffusion(u,dt,f,20);
 
 %%
 % Display result

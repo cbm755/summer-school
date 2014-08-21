@@ -26,7 +26,7 @@
     %emph=[2]{word1,word2}, emphstyle=[2]{style},    
 }
 
-\title{PDEs for Image Processing}
+\title{PDEs for Image Processing - Lecture 1}
 \date{August 15, 2014}
 \author{Martin Robinson}
 
@@ -316,7 +316,7 @@ end
 %E_i^n = \frac{1}{2} \Delta t u_{tt}(x_i,t_{n}) + \mathcal{O}(\Delta t^2) - \frac{1}{12} h^2 u_{xxxx}(x_i,t_{n}) + \mathcal{O}(\Delta h^4)
 %\end{equation}
 
-\subsubsection{Stability}
+\subsubsection{Convergence}
 The error of the finite difference approximation is given by
 \begin{equation} \label{eq:error}
 E_i^n = \frac{u(x_i,t^{n+1})-u(x_i,t^{n})}{\Delta t} - D (u(x_{i+1},t^{n}) - 2u(x_{i1},t^{n}) + u(x_{i-1},t^{n})
@@ -356,7 +356,7 @@ Therefore the scheme converges for $1-2r\geq 0$
 The two-dimensional version of the heat equation is given as
 \begin{equation}\label{eq:diffusion2}
 \left\lbrace \begin{array}{c}
-u_t(x,y,t) = D (u_{xx}(x,y,t) + u_{xx}(x,y,t)) \\
+u_t(x,y,t) = D (u_{xx}(x,y,t) + u_{yy}(x,y,t)) \\
 u(x,y,0) = u_0(x,y)
 \end{array}
 \right.

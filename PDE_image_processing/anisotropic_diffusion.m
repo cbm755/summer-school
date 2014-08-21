@@ -1,16 +1,13 @@
-%% Solving the 2-D isotropic diffusion equation by the Finite Difference
+%% Solving the 2-D anisotropic diffusion equation by the Finite Difference
 %
-%  u = isotropic_diffusion(U, DTD, N) where U is a 2D matrix representing
+%  u = anisotropic_diffusion(U, DTD, N) where U is a 2D matrix representing
 %       the initial conditions, DTD is the timestep dt multiplied by the
 %       diffusion constant D, and N is the number of timesteps
 %
-% Method: Forward Time, Centered Space.
 %
 % Boundary Conditions = Zero-neumann
 %
-% $$u_t(x,y,t) = D (u_{xx}(x,y,t) + u_{xx}(x,y,t))$$
-%
-% $$u^{n+1}_i = \Delta t D (u^n_{i+1,j} + u^n_{i-1,j} + u^n_{i,j+1} + u^n_{i,j-1}) + (1-4\Delta t D)u^n_{i,j})$$
+% $$u_t(x,y,t) = \alpha u_{NN}(x,y,t) + \beta u_{TT}(x,y,t)$$
 %
 % $$\frac{\partial u}{\partial x}(0,y,t) = 0$$
 %
@@ -20,7 +17,7 @@
 %
 % $$\frac{\partial u}{\partial y}(x,L,t) = 0$$
 %
-function u = isotropic_diffusion(u, dtD, N)
+function u = anisotropic_diffusion(u, dt, alpha,beta,N)
   %%
   % Get size of initial condition matrix
   [nx ny] = size(u);
@@ -35,8 +32,16 @@ function u = isotropic_diffusion(u, dtD, N)
   % Loop through timesteps
   for it=1:N
       %% 
-      % Use Forward Time, Centered Space
-      u(i,j)= dtD*(u(i+1,j)+u(i-1,j)+u(i,j+1)+u(i,j-1)) + (1-4*dtD)*u(i,j);
+      % Forward time, centred space 
+      u_x2 = (u(i+1,j)-u(i-1,j)).^2;
+      u_y2 = (u(i,j+1)-u(i,j-1)).^2;
+      A = alpha * u_x2 + beta * u_y2;
+      B = (alpha-beta) * (u(i+1,j)-u(i-1,j)).*(u(i,j+1)-u(i,j-1));
+      C = beta * u_x2 + alpha * u_y2;
+      u_xx = u(i+1,j) - 2*u(i,j) + u(i-1,j);
+      u_yy = u(i,j+1) - 2*u(i,j) + u(i,j-1);
+      u_xy = u(i+1,j+1) - u(i-1,j+1) - u(i+1,j-1) + u(i-1,j-1);
+      u(i,j) = u(i,j) + dt*(A.*u_xx + B.*u_xy + C.*u_yy)./(u_x2+u_y2);
       
       %% 
       % Zero-neumann boundary conditions

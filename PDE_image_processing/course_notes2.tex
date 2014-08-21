@@ -1,0 +1,233 @@
+\documentclass[11pt,a4paper,noindent]{article}
+\usepackage{graphicx,amsmath,amsfonts,amssymb,amsthm}
+\usepackage{fullpage}
+\usepackage{exercise}
+\usepackage{listings}
+\usepackage{color} %red, green, blue, yellow, cyan, magenta, black, white
+\definecolor{mygreen}{RGB}{28,172,0} % color values Red, Green, Blue
+\definecolor{mylilas}{RGB}{170,55,241}
+
+\begin{document}
+\lstset{language=Matlab,%
+    %basicstyle=\color{red},
+    basicstyle=\small,
+    breaklines=true,%
+    morekeywords={matlab2tikz},
+    keywordstyle=\color{blue},%
+    morekeywords=[2]{1}, keywordstyle=[2]{\color{black}},
+    identifierstyle=\color{black},%
+    stringstyle=\color{mylilas},
+    commentstyle=\color{mygreen},%
+    showstringspaces=false,%without this there will be a symbol in the places where there is a space
+    numbers=left,%
+    numberstyle={\tiny \color{black}},% size of the numbers
+    numbersep=9pt, % this defines how far the numbers are from the text
+    emph=[1]{for,end,break},emphstyle=[1]\color{red}, %some words to emphasise
+    %emph=[2]{word1,word2}, emphstyle=[2]{style},    
+}
+
+\title{PDEs for Image Processing - Lecture 2}
+\date{August 21, 2014}
+\author{Martin Robinson}
+
+\maketitle
+
+\section{Anisotropic Diffusion}
+
+The classic isotropic diffusion equation uses a diffusion parameter $D$
+which is constant over the entire domain. While this smooths out noise,
+it also smooths out image features, most notably edges (jumps in pixel
+intensity). If we want to preserve an edge $\Gamma$, we wish to
+reduce diffusion across (or perpendicular) to the edge while keeping
+normal diffusion along (tangential) to the edge. We therefore need to
+identify the perpendicular and tangential directions near an edge in the
+image. We can do this using the grandient vector of $u$, which we
+know to be (a) large near $\Gamma$ and (b) perpendicular to
+$\Gamma$. Hence the unit vector $N$ normal to $\Gamma$ and the
+tangential vector $T$ are given by
+
+\begin{align}
+N &= \frac{1}{|\nabla{u}|} \nabla{u} = \frac{1}{|\nabla{u}|}\begin{pmatrix} u_x \\u_y \end{pmatrix} \\
+T &= N^\perp = \frac{1}{|\nabla{u}|}\begin{pmatrix} -u_y \\u_x \end{pmatrix}
+\end{align}
+
+We can then define the first and second derivatives of $u$ with respect
+to $N$ and $T$.
+
+\begin{align}
+u_N &= N \cdot \nabla u,\\
+u_{NN} &= N \cdot H(u) N,\\
+u_T &= T \cdot \nabla u,\\
+u_{TT} &= T \cdot H(u) T,\\
+\end{align}
+
+where $H(u)$ is the hessian matrix of $u$
+
+\begin{align}
+H(u) = \begin{pmatrix} u_{xx} & u_{xy} \\ u_{xy} & u_{yy} \end{pmatrix}
+\end{align}
+
+Note that $u_T=0$, since the gradient of $u$ is zero
+tangential to the edge.
+
+Now that we have defined a new local coordinate system in terms of
+$N$ and $T$, we can use this to construct an anisotropic
+diffusion equation, where the pixel values diffuse differently either
+normal or tangent to an edge. We therefore redefine the diffusion constant $K$ to be a
+2x2 matrix. For example,
+
+\begin{align}
+K = \begin{pmatrix} \alpha & 0 \\ 0 & \beta \end{pmatrix}.
+\end{align}
+
+Our anisotropic heat equation then becomes
+
+\begin{align}
+u_t(x,y,t) &= K (u_{NN}(x,y,t) + u_{TT}(x,y,t)) \\
+u_t(x,y,t) &= \alpha u_{NN}(x,y,t) + \beta u_{TT}(x,y,t)
+\end{align}
+
+As you can see, now we have two parameters for the equation, $\alpha$ and $\beta$. These control the diffusive strength normal to and tangential to the edges in the image. So if we wished to remove diffusion across the edge then we could set $\alpha=0$.
+
+Before we can use finite differences to solve this equation, we need to get it in terms involving $u$ and its derivatives with respect to the normal Cartesian coordinates $x$ and $y$.
+
+\begin{align} \label{eq:anisotropic}
+u_t &= \alpha u_{NN} + \beta u_{TT} \\
+u_t &= \alpha N \cdot H(u) N + \beta T \cdot H(u) T \\
+u_t &= \alpha \frac{u_x^2 u_{xx} + 2 u_x u_y u_{xy} + u_y^2 u_{yy}}{u_x^2+u_y^2} + \beta \frac{u_y^2 u_{xx} - 2 u_x u_y u_{xy} + u_x^2 u_{yy}}{u_x^2+u_y^2} \\
+u_t &= \frac{A u_{xx} + B u_{xy} + C u_{yy}}{u_x^2 + u_y^2},
+\end{align}
+where
+\begin{align}
+A &= \alpha u_x^2 + \beta u_y^2 \\
+B &= (\alpha-\beta) u_x u_y \\
+C &= \beta u_x^2 + \alpha u_y^2
+\end{align}
+
+We can discritize the single derivatives using a \emph{central difference} $D_c^x u \approx u_x$
+
+\begin{align}
+u_x \approx D_c^x u &= \frac{u_{i+1,j}-u_{i-1,j}}{2\Delta x},
+\end{align}
+
+The mixed derivative $u_{xy}$ can be constructed by using the central difference operator twice on $x$ and $y$
+
+\begin{align}
+u_{xy} = (u_x)_y \approx D_c^y (D_c^x u),
+\end{align}
+
+which can be evaluated as
+
+\begin{align}
+ D_c^y (D_c^x u) &= \frac{\frac{u_{i+1,j+1}-u_{i-1,j+1}}{2\Delta x} - \frac{u_{i+1,j-1}-u_{i-1,j-1}}{2\Delta x}}{2\Delta y}, \\
+ &= \frac{u_{i+1,j+1}-u_{i-1,j+1} - u_{i+1,j-1} + u_{i-1,j-1}}{4\Delta x \Delta y}.
+\end{align}
+
+As before, the double derivatives can be constructed using a combination of \emph{forward difference} $D_+^x$ and \emph{backwards difference} $D_-^x$ operators.
+
+\begin{align}
+u_x &\approx D_+^x u = \frac{u_{i+1,j}-u_{i,j}}{\Delta x}, \\
+u_x &\approx D_-^x u = \frac{u_{i,j}-u_{i-1,j}}{\Delta x}, \\
+u_{xx} &\approx D_-^x (D_+^x u), 
+\end{align}
+
+where 
+
+\begin{align}
+ D_-^x (D_+^x u) &= \frac{\frac{u_{i+1,j}-u_{i,j}}{\Delta x} - \frac{u_{i,j}-u_{i-1,j}}{\Delta x}}{\Delta x}, \\
+ &= \frac{u_{i+1,j}-2u_{i,j} +u_{i-1,j}}{\Delta x^2}.
+\end{align}
+
+Substitute these approximations back into Eq. \ref{eq:anisotropic} and choose a suitable discritization for the time derivative to numerically calculate the solution to the anisotropic diffusion equation.
+
+However, notice that we still have the diffusion parameters $\alpha$ and $\beta$ as constants. Another option is to have these parameters depend on $x$ and $y$, or even some property of the image, such as $|\nabla u|$. In the next section we will examine the effect of spatially varying diffusion.
+
+\section{Spatially Varying Diffusion}
+
+The heat equation $u_t = K \nabla u$ involves a diffusion constant $K$. We could replace that constant with a function of space
+
+\begin{align}
+u_t = \nabla \cdot (K(\mathbf{x}) \nabla u).
+\end{align}
+
+In one dimension, this would be
+
+\begin{align}
+u_t = (K(x) u_x)_x.
+\end{align}
+
+A common approach to discretizing this is to use a \emph{forward difference} $D_+^x \approx u_x$ on the $u_x$ term
+
+\begin{align}
+u_x \approx D_+^x u = \frac{u_{i+1}-u_{i}}{\Delta x},
+\end{align}
+
+then evaluate $K(x)$ at the midpoint: $K(x_{i+\frac{1}{2}})$, so that
+
+\begin{align}
+K(x) u_x \approx K(x_{i+\frac{1}{2}}) \frac{u_{i+1}-u_{i}}{\Delta x},
+\end{align}
+
+Then, differentiate the result approximately with a \emph{backwards difference} $D_-^x$. 
+
+\begin{align}
+u_x \approx D_-^x u = \frac{u_{i}-u_{i-1}}{\Delta x},
+\end{align}
+
+so that
+
+\begin{align}
+(K(x) u_x)_x &\approx D_-^x(K(x_{i+\frac{1}{2}}) D_+^xu) = \frac{K(x_{i+\frac{1}{2}})\frac{u_{i+1}-u_{i}}{\Delta x} - K(x_{i-\frac{1}{2}})\frac{u_{i}-u_{i-1}}{\Delta x}}{\Delta x} \\
+&\approx \frac{ K(x_{i+\frac{1}{2}}) u_{i+1} - 
+			    (K(x_{i+\frac{1}{2}})+K(x_{i-\frac{1}{2}}))u_{i} + 								K(x_{i-\frac{1}{2}}) u_{i-1} }{\Delta x^2}
+\end{align}
+
+Naturally, for constant diffusion $K(x)=K$ this reduces to 
+
+\begin{align}
+(K(x) u_x)_x &\approx K \frac{ u_{i+1} - 2 u_{i} + u_{i-1} }{\Delta x^2}
+\end{align}
+
+For two dimensions, the spatially varying heat equation is
+
+\begin{align}
+u_t = (K(x,y) u_x)_x + (K(x,y) u_y)_y.
+\end{align}
+
+and this can be discretized in a similar fashion to give 
+
+\begin{align}
+(K(x,y) u_x)_x &\approx \frac{ K(x_{i+\frac{1}{2}},y_j) u_{i+1,j} - 
+			    (K(x_{i+\frac{1}{2}},y_j)+K(x_{i-\frac{1}{2}},y_j))u_{i,j} + 								K(x_{i-\frac{1}{2}},y_j) u_{i-1,j} }{\Delta x^2} \\
+(K(x,y) u_y)_y &\approx \frac{ K(x_{i},y_{j+\frac{1}{2}}) u_{i,j+1} - 
+			    (K(x_{i},y_{j+\frac{1}{2}})+K(x_{i},y_{j-\frac{1}{2}}))u_{i,j} + 								K(x_{i},y_{j-\frac{1}{2}}) u_{i,j-1} }{\Delta y^2} \\
+u_t &\approx \frac{u^{n+1} - u^n}{\Delta t}.
+\end{align}
+
+If only the nodal values for $K(x,y)$ are known, then a reasonable approximation is to use the average of two neighbouring grid points
+
+\begin{align}
+K(x_{i},y_{j+\frac{1}{2}}) &= \frac{1}{2} (K_{i,j+1}+K_{i,j}) \\
+K(x_{i+\frac{1}{2}},y_{j}) &= \frac{1}{2} (K_{i+1,j}+K_{i,j})
+\end{align}
+
+Which results in 
+
+\begin{align}
+(K(x,y) u_x)_x &\approx \frac{ (K_{i+1,j}+K_{i,j}) u_{i+1,j} - 
+			    ( (K_{i+1,j}+2K_{i,j}+K_{i-1,j}))u_{i,j} + 								 (K_{i-1,j}+K_{i,j}) u_{i-1,j} }{2\Delta x^2} \\
+(K(x,y) u_y)_y &\approx \frac{ (K_{i,j+1}+K_{i,j}) u_{i,j+1} - 
+			    ( (K_{i,j+1}+2K_{i,j}+K_{i,j-1}))u_{i,j} + 								 (K_{i,j-1}+K_{i,j}) u_{i,j-1} }{2\Delta y^2} \\
+u_t &\approx \frac{u^{n+1} - u^n}{\Delta t}.
+\end{align}
+
+For $\Delta x = \Delta y = 1$ this simplifies to
+
+\begin{align}
+u^{n+1}_{i,j} = &u^{n}_{i,j} + \frac{1}{2}\Delta t (\\
+& (K_{i+1,j}+K_{i,j}) u_{i+1,j}  + (K_{i-1,j}+K_{i,j}) u_{i-1,j} \\
+& (K_{i,j+1}+K_{i,j}) u_{i,j+1}  + (K_{i,j-1}+K_{i,j}) u_{i,j-1} \\
+& - (K_{i+1,j}+K_{i-1,j}+K_{i,j+1}+K_{i,j-1}+4K_{i,j} )u_{i,j})
+\end{align}
+
+\end{document}

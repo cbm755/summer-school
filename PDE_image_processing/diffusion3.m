@@ -1,4 +1,4 @@
-%% Isotropic diffusion for image processing 1
+%% Isotropic diffusion for image processing 3
 % Read image and convert to double
 u = double(imread('squares.bmp'));
 
@@ -21,9 +21,10 @@ ylabel('u')
 
 %%
 % Run diffusion
+alpha = 0.1;
+beta = 1;
 dt = 0.1;
-D = 1;
-u = isotropic_diffusion(u, dt*D, 10);
+u = anisotropic_diffusion(u,dt,alpha,beta,20);
 
 %%
 % Display result

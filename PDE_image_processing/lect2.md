@@ -1,5 +1,6 @@
-Anisotropic and Heterogeneous Diffusion
-=======================================
+% Anisotropic and Heterogeneous Diffusion
+% Martin Robinson
+% 21/08/2014
 
 The classic isotropic diffusion equation uses a diffusion parameter $D$
 which is constant over the entire domain. While this smooths out noise,
