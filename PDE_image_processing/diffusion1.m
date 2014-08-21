@@ -11,12 +11,12 @@ u = u + 10.0*randn (size(u));
 figure
 subplot(2,2,1)
 colormap gray
-imshow(uint8(u));
+imagesc(uint8(u));
 title('before');
 
 subplot(2,2,2)
 colormap gray
-plot(u(size(u,1)/2,:));
+plot(u(size(u,1)/2+1,:));
 ylabel('u')
 
 %%
@@ -28,7 +28,7 @@ u = isotropic_diffusion(u, dt*D, 10);
 %%
 % Display result
 subplot(2,2,3)
-imshow(uint8(u));
+imagesc(uint8(u));
 title('after');
 
 subplot(2,2,4)

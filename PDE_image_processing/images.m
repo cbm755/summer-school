@@ -16,16 +16,16 @@ u_int8_color = imread('lena3.tif');
 
 
 %% Display image
-% Use either *imagesc* or *imshow* to display images
+% Use either *imagesc* or *imagesc* to display images
 %
-% *imshow*(I) displays a grayscale or truecolor image
+% *imagesc*(I) displays a grayscale or truecolor image
 % *imagesc*(I) is similar, but scales the pixel values to use the full
 % colormap
 %
 % We will use *figure*(H) to open a new plotting window, where H is an 
 % integer representing the id, or handle of the window. 
 % 
-% We will show the result result of *imshow* and *imagesc* in separate 
+% We will show the result result of *imagesc* and *imagesc* in separate 
 % subplots.
 % H = *subplot*(m,n,p), breaks the Figure window into an m-by-n matrix of 
 % small axes, selects the p-th axes for the current plot, and returns the 
@@ -33,11 +33,11 @@ u_int8_color = imread('lena3.tif');
 
 figure(1)
 subplot(2,2,1)
-imshow(u_int8_gray)
+imagesc(u_int8_gray)
 subplot(2,2,2)
 imagesc(u_int8_gray)
 subplot(2,2,3)
-imshow(u_int8_color)
+imagesc(u_int8_color)
 subplot(2,2,4)
 imagesc(u_int8_color)
 
@@ -47,20 +47,20 @@ imagesc(u_int8_color)
 
 figure(2)
 subplot(2,3,1)
-imshow(u_int8_color(:,:,1))
+imagesc(u_int8_color(:,:,1))
 title('red')
 subplot(2,3,2)
-imshow(u_int8_color(:,:,2))
+imagesc(u_int8_color(:,:,2))
 title('green')
 subplot(2,3,3)
-imshow(u_int8_color(:,:,3))
+imagesc(u_int8_color(:,:,3))
 title('blue')
 
 subplot(2,3,4)
-imshow(rgb2gray(u_int8_color))
+%imagesc(rgb2gray(u_int8_color))
 title('greyscale')
 subplot(2,3,5)
-imshow(u_int8_color)
+imagesc(u_int8_color)
 title('color')
 %% Convert datatype to double
 % Convert image matrix to the double datatype. pixel values can now be
@@ -81,5 +81,5 @@ u = double(u_int8_gray);
 
 u = u + 20.0*randn (size(u));
 figure(3)
-imshow(uint8(u))
+imagesc(uint8(u))
 

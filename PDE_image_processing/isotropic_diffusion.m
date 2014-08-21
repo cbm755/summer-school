@@ -23,13 +23,13 @@
 function u = isotropic_diffusion(u, dtD, N)
   %%
   % Get size of initial condition matrix
-  [nx ny] = size(u);
+  [nx ny] = size(u)
 
   %% 
   % Setup indexing. We don't update the boundary pixels, as they are set by
   % the boundary conditions
-  j=2:nx-1;
-  i=2:ny-1;
+  i=2:nx-1;
+  j=2:ny-1;
   
   %%
   % Loop through timesteps
@@ -43,7 +43,6 @@ function u = isotropic_diffusion(u, dtD, N)
       u(1,:) = u(2,:);
       u(nx,:) = u(nx-1,:);
       u(:,1) = u(:,2);
-      u(:,nx) = u(:,ny-1);
+      u(:,ny) = u(:,ny-1);
   end
-
 end
