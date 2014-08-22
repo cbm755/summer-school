@@ -80,11 +80,11 @@ normal or tangent to an edge. We therefore redefine the diffusion constant $K$ t
 K = \begin{pmatrix} \alpha & 0 \\ 0 & \beta \end{pmatrix}.
 \end{align}
 
-Our anisotropic heat equation then becomes
+Defining $\nabla u = \begin{pmatrix}u_N \\ u_T \end{pmatrix}$, our anisotropic heat equation then becomes
 
 \begin{align}
-u_t(x,y,t) &= K (u_{NN}(x,y,t) + u_{TT}(x,y,t)) \\
-u_t(x,y,t) &= \alpha u_{NN}(x,y,t) + \beta u_{TT}(x,y,t)
+u_t &= \nabla \cdot (K\nabla u) = \nabla \cdot \left ( \begin{pmatrix} \alpha & 0 \\ 0 & \beta \end{pmatrix} \begin{pmatrix} u_N \\ u_T \end{pmatrix} \right )\\ 
+u_t &= \alpha u_{NN} + \beta u_{TT}
 \end{align}
 
 As you can see, now we have two parameters for the equation, $\alpha$ and $\beta$. These control the diffusive strength normal to and tangential to the edges in the image. So if we wished to remove diffusion across the edge then we could set $\alpha=0$.
