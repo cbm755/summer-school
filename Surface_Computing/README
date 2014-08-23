@@ -1,0 +1,7 @@
+This folder contains lecture notes and project description for the surface computing course.
+
+The implementations of Closest Point Method, including the codes 
+example_heat_sphere.m and example_RD_sphere.m needed for doing course project,
+can be found from another git repo: https://github.com/cbm755/cp_matrices.
+You might want to start with the examples folder.
+
