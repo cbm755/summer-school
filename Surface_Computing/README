@@ -4,4 +4,7 @@ The implementations of Closest Point Method, including the codes
 example_heat_sphere.m and example_RD_sphere.m needed for doing course project,
 can be found from another git repo: https://github.com/cbm755/cp_matrices.
 You might want to start with the examples folder.
+To actually make the codes in examples folder work, you have to git clone
+or download the whole repo. I'll talk more about this repo and bring a USB
+copy of it during Monday's lecture.
 
