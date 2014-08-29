@@ -21,10 +21,10 @@ ylabel('u')
 
 %%
 % Run diffusion
-alpha = 0.1;
+alpha = 0.0;
 beta = 1;
 dt = 0.1;
-u = anisotropic_diffusion(u,dt,alpha,beta,20);
+u = anisotropic_diffusion(u,dt,alpha,beta,100);
 
 %%
 % Display result

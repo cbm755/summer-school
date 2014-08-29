@@ -6,7 +6,8 @@ u = double(imread('squares.tif'));
 
 %% Display image
 figure(1)
-imshow(uint8(u))
+colormap gray
+imagesc(uint8(u))
 
 %% Diffuse
 dt = 0.1;
@@ -14,17 +15,18 @@ D = 1;
 u_d = u;
 u_d = isotropic_diffusion(u, dt*D, 20);
 figure(2)
-imshow(uint8(u_d))
+imagesc(uint8(u_d))
 
 %% Subtract Diffused Image
 u_e = u - u_d;
 figure(3)
-imshow(uint8(u_e))
+imagesc(uint8(u_e))
 
 %% Add Edge Image to Original Image
 u_f = u + u_e;
 figure(4)
-imshow(uint8(u_f))
+colormap gray
+imagesc(uint8(u_f))
 
 %% Show What Happens In a Single Line
 i = size(u,1)/2+1
