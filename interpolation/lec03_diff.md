@@ -59,16 +59,9 @@ $$f''(x_j) = \frac{1}{h^2} f_{j-1} -  \frac{2}{h^2} f_j  +   \frac{1}{h^2} f_{j+
 
 What can we learn from the polynomial interpolant error formula?
 
->
->
+Not much!
 
->
->
-
->
->
-
-Note predicts $O(h)$ which is correct when the data is not equispaced.
+In some sense, predicts $O(h)$ which is correct when the data is not equispaced.
 Equispaced, it should be $O(h^2)$, which we'll see this more precisely by
 the next method.
 
@@ -86,36 +79,35 @@ Based on Taylor series.  Taylor expand $f(x+h)$ and $f(x-h)$ (and
 others) in small parameter $h$ about $x$.
 
 
-#### Example
+#### Examples
 
-Second derivative from three data points again...
+Various derivatives from three data points.  Consider a smooth function
+$u(x)$ then
 
->
->
+$$u(x+h) = u(x) + h u'(x) + \frac{h^2}{2} u''(x) + \frac{h^3}{6} u'''(x) + \frac{h^4}{24} u'''''(x) + \ldots $$
 
->
->
+$$u(x-h) = u(x) - h u'(x) + \frac{h^2}{2} u''(x) - \frac{h^3}{6} u'''(x) + \frac{h^4}{24} u'''''(x) - \ldots $$
 
->
->
+From this can show how we can compute three difference \emph{schemes}
+(approximations) to $u'(x)$:
 
->
->
+**Forward difference**:
+$$u'(x) = \frac{u(x+h)-u(x)}{h} + O(h)$$
 
->
->
+**Backward difference**:
+$$u'(x) = \frac{u(x)-u(x-h)}{h} + O(h)$$
 
->
->
+**Centered difference**:
+$$u'(x) = \frac{u(x+h)-u(x-h)}{2h} + O(h^2)$$
 
 
 #### Error Analysis
 
-Note: get's the $O(h^2)$ error term.
+Note: this gives the $O(h^2)$ error term.
 
-For practical algorithms, see paper
-[Fornberg, Calculation of Weights in Finite Difference Formulas,
-SIAM Review, 1998, [doi:10.1137/S0036144596322507](http://dx.doi.org/10.1137/S0036144596322507)].
+For practical algorithms:
+[Fornberg, Calculation of weights in finite difference formulas,
+[SIAM Rev. 1998](http://dx.doi.org/10.1137/S0036144596322507)].
 
 
 
@@ -124,9 +116,8 @@ SIAM Review, 1998, [doi:10.1137/S0036144596322507](http://dx.doi.org/10.1137/S00
 Lecture 4: the Barycentric Formula
 ==================================
 
-Handout:
-[Berrut & Trefethen, _Barycentric Lagrange interpolation_, SIAM Review
-2004, [doi:10.1137/S0036144502417715](http://dx.doi.org/10.1137/S0036144502417715)].
+See:
+[Berrut & Trefethen, _Barycentric Lagrange interpolation_, [SIAM Rev. 2004](http://dx.doi.org/10.1137/S0036144502417715)].
 
 
 Consider the "Barycentric formula" for Lagrange interpolation:
@@ -149,6 +140,6 @@ What do you think could go wrong in computation?
 
 Reference:
 [Higham, _The numerical stability of barycentric Lagrange
-interpolation_, IMAJNA 2004, [doi:10.1093/imanum/24.4.547](http://dx.doi.org/10.1093/imanum/24.4.547)].
+interpolation_, [IMAJNA 2004](http://dx.doi.org/10.1093/imanum/24.4.547)].
 
 
