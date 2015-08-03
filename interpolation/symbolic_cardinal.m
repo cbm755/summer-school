@@ -37,13 +37,11 @@ function y = symbolic_cardinal(nodes, k)
   % This should be just:
   %dem = num(nodes(k))
   % but this doesn't work in Matlab because () means index the
-  % array.
-  dem = subs(num, x, nodes(k));
-  % alt: Instead we use a loop.  "bsxfun" probably works too.
-  %dem = [];
-  %for i=1:length(num)
-  %  dem(i) = subs(num(i), x, nodes(k));
-  %end
+  % array.  Instead we use a loop.  "bsxfun" probably works too.
+  dem = sym([]);
+  for i=1:length(num)
+    dem(i) = subs(num(i), x, nodes(k));
+  end
 
   %% construct the L_{n,k}(x) polynomial
   y = prod(num) / prod(dem);
