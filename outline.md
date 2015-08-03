@@ -14,81 +14,115 @@ with cutting-edge Oxford Mathematics research.
 
 
 
-Topics and Schedule
--------------------
 
-*   Week 2:
+Websites
+--------
 
-    +   Monday--Wednesday: background material in Numerical Analysis,
-        Finite differences and interpolation.  Quadrature.
-        Interpolation in barycentric form.  Numerical solution of
-        differential equations (ODEs and PDEs).  Software
-        considerations.
-
-    +   Wednesday: Midterm.
-    +   Thursday: no lectures.
-    +   Friday: Image processing.
-
-*    Week 3: no lectures.
-
-*    Week 4: Image processing and computing on curved surfaces, project
-     work.
+We will have various material online.  Start at
+[people.maths.ox.ac.uk/macdonald/CBL](http://people.maths.ox.ac.uk/macdonald/CBL)
+and [github.com/cbm755/summer-school](https://github.com/cbm755/summer-school)
 
 
 
 Lecturers
 ---------
 
- *  Prof. Colin Macdonald, Associate Professor in Numerical
-    Methodologies, Tutorial Fellow at Oriel College, University of
-    Oxford.  email: macdonald@maths.ox.ac.uk
+ *  Prof. Colin Macdonald, Associate Professor, Tutorial Fellow at Oriel College,
+    University of Oxford.  email: macdonald@maths.ox.ac.uk
 
- *  Dr Martin Robinson, Postdoctoral Research Fellow, Mathematical
-    Institute, University of Oxford.
+ *  Dr Martin Robinson, Research Software Engineer in Computational Biology,
+    University of Oxford.
 
- *  Mr Yujia Chen, DPhil Student, Mathematical Institute, University of
-    Oxford.
-
-
-Text Books
-----------
-
-None required, but for additional reading:
-
- * LeVeque, Finite Difference Methods for Ordinary and Partial
-   Differential Equations, SIAM 2007.
-
- * Süli and Mayers, An Introduction to Numerical Analysis, CUP 2003.
-
-And other references, papers and lecture notes to be added during the
-course.
-
-
-Website
--------
-
-There may be various material online.  Start looking here:
-
-* [people.maths.ox.ac.uk/macdonald/CBL](http://people.maths.ox.ac.uk/macdonald/CBL)
-
-* [github.com/cbm755/summer-school](https://github.com/cbm755/summer-school)
+Also includes material from Dr Yujia Chen, Dr Ingrid von Glehn, Dr
+Thomas März and others.
 
 
 
 
+Midterms, projects and presentations
+------------------------------------
 
-Midterm
--------
+* There will be a midterm exam on Friday 7th August.
 
-There will be a midterm exam on Wednesday 13 August.
+* Students will present the results of one or more projects towards the
+end of the course.  More details on projects to follow.
 
 
-Projects and Presentations
---------------------------
 
-Students will present the results of one or more projects towards the
-end of the course.  Likely Thursday 28th August.  More details on
-projects to follow.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+Week 1: Intro to Numerical Analysis
+-----------------------------------
+    
+Course description: this first week of the course covers background material in Numerical Analysis.  It will consist of lectures and computer demonstrations.
+
+Prerequisites: calculus, basic linear algebra, basic knowledge about differential equations.  It will be helpful to have either Matlab or GNU Octave installed on your computer.
+
+Contents: finite differences and interpolation; quadrature; interpolation in barycentric form; numerical solution of differential equations (ODEs and PDEs); software considerations.
+
+Examining: the first week of material will be assessed by a midterm examination.
+
+**References**: not required, but for additional reading:
+
+LeVeque, Finite Difference Methods for Ordinary and Partial
+Differential Equations, SIAM 2007.
+
+Süli and Mayers, An Introduction to Numerical Analysis, CUP 2003.
+
+(And other references, papers and lecture notes to be noted during the
+course.)
+
+
+
+Week 2: Image processing
+------------------------
+
+Course description: Image processing uses mathematics to manipulate digital images (e.g., from a camera or a medical scanning device).
+The aim of this course is to give an introduction to diffusion PDEs as a means for image processing.  Diffusion processes are used to remove noise while preserving or enhancing features such as edges which play an important role in the human perception of an image. 
+In particular we will discuss edge-stopping and edge-enhancing filters based on diffusion and transport models.
+
+The course will be a combination of lectures and practical computing work.
+
+Prerequisites: Multivariable calculus, basic linear algebra, basic knowledge about differential equations.
+
+Contents:
+The 1D & 2D heat equation, frequency response (low-pass filter), fundamental solution with Fourier Transform, numerical solution with finite difference schemes, MATLAB implementation, unsharp-mask filter.
+Aniosotropic and non-linear diffusion for edge preservation, transport equation and the Osher and Rudin shock filter for edge enhancement.
+
+
+**References**:
+
+J. Weickert, "Anisotropic diffusion in image processing", Teubner Stuttgart, 1998.
+
+T. F. Chan, J. J. Shen, "Image Processing and Analysis: Variational, PDE, Wavelet, and Stochastic Methods", SIAM, 2005.
+
+G. Gilboa, N. Sochen, Y.Y. Zeevi, "Regularized Shock Filters and Complex Diffusion", ECCV 2002, LNCS 2350, pp. 399-313, Springer-Verlag 2002.
+
+
+
+Week 3: Surface computing
+-------------------------
+
+Course description: This course introduces numerical solutions of Partial Differential Equations (PDEs) on surfaces using the Closest Point Method. 
+
+Surface PDEs arise from many applications in physics, biology, and engineering. Among various numerical techniques for solving surface PDEs, the Closest Point Method is easy to implement and it works for a wide range of PDEs on surfaces with complex geometries. 
+
+This course will cover basic theories, numerics and MATLAB implementations related to the method. 
+
+Prerequisites: Multivariable calculus, basic linear algebra, basic knowledge about differential equations.
+
+Contents: Applications of surface PDEs, surface differential operators and examples, introduction to the Closest Point Method, matrix formulation of spatial discretizations, diffusion equation on a unit circle, reaction-diffusion on a unit sphere, MATLAB implementations and demos.
+Closest Point Method: Method of Lines approach, coupled surface-bulk problems
+
+**References**:
+
+Steven J. Ruuth and Barry Merriman. A simple embedding method for solving partial differential equations on surfaces. J. Comput. Phys., 2008.
+
+Colin B. Macdonald and Steven J. Ruuth. Level set equations on surfaces via the Closest Point Method. J. Sci. Comput., 2008.
+
+Colin B. Macdonald and Steven J. Ruuth. The implicit Closest Point Method for the numerical solution of partial differential equations on surfaces. SIAM J. Sci. Comput., 2009.
+
 
 
 
@@ -101,12 +135,9 @@ The projects and lectures will involve computation and programming.
 
 *Octave*: alternatively, you can use GNU Octave which is Free/Open
 Source Software.  Octave is included in the package managers for most
-popular GNU/Linux distributions.
-
-*Octave for Windows/Mac*: consult [wiki.octave.org/Octave_for_Microsoft_Windows](http://wiki.octave.org/Octave_for_Microsoft_Windows).
-As of August 2014, we recommend the "3.8 MXE" build at
-[mxeoctave.osuv.de](http://mxeoctave.osuv.de).  Consult their website
-for Mac OS X installations.
+popular GNU/Linux distributions.  For Windows, you should be able to
+download version 4.0 or later from
+[www.octave.org](http://www.octave.org).  Mac users consult internet.
 
 *Tablets/phones*: one possibility is to use Octave within
  [cloud.sagemath.com](http://cloud.sagemath.com).  There are also
@@ -128,6 +159,4 @@ the course.
 
 \LaTeX: you might consider using the Beamer class for your
 presentation.  Also a necessary skill for graduate school.
-
-
 
