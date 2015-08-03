@@ -4,16 +4,8 @@ Lecture 5: Timestepping and ODEs
 Last Day Review
 ===============
 
-First, let's repeat the calculation I messed up last day to derive
-derivative rules from Taylor series!  Consider a smooth function
-$u(x)$.
-
-$$u(x+h) = u(x) + h u'(x) + \frac{h^2}{2} u''(x) + \frac{h^3}{6} u'''(x) + \frac{h^4}{24} u'''''(x) + \ldots $$
-
-$$u(x-h) = u(x) - h u'(x) + \frac{h^2}{2} u''(x) - \frac{h^3}{6} u'''(x) + \frac{h^4}{24} u'''''(x) - \ldots $$
-
-... and show how we can compute three difference \emph{schemes}
-(approximations) to $u'(x)$ from this:
+Recall from last day, we can derive approximations to derivatives of a
+smooth function $u(x)$:
 
 **Forward difference**:
 $$u'(x) = \frac{u(x+h)-u(x)}{h} + O(h)$$
@@ -229,7 +221,7 @@ Higher-order RK formulas get very complicated.
 The coefficients of Runge-Kutta methods can be stored in a "Butcher
 Tableau".  Matlab's |ode45| uses a method of Dormand and Prince 1980
 (see pg178 of HairerWannerNorsett).  Jim Verner (I've had the
-honour of working him) also constructed high-order methods (and still
+honour of working with him) also constructed high-order methods (and still
 does).  See "DVERK User Guide" from 1976.
 
 Aside: if anyone has an interest in pure mathematics, John Butcher has
@@ -452,7 +444,7 @@ different *time scale* than $\cos(t)$.
 
 # Introduction to implicit methods
 
-(Part of) the curve for stiffness?  Use implicit methods.
+(Part of) the cure for stiffness?  Use implicit methods.
 E.g., backward Euler method:
 
 $$v^{n+1} = v^n + k f^{n+1} = v^n + k f(t_{n+1}, v^{n+1}).$$
