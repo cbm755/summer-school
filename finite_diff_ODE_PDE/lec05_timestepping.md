@@ -4,8 +4,14 @@ Lecture 5: Timestepping and ODEs
 Last Day Review
 ===============
 
-Recall from last day, we can derive approximations to derivatives of a
-smooth function $u(x)$:
+Recall from last day, we can use Taylor expansions of a smooth function $u(x)$:
+
+$$u(x+h) = u(x) + h u'(x) + \frac{h^2}{2} u''(x) + \frac{h^3}{6} u'''(x) + \frac{h^4}{24} u'''''(x) + \ldots $$
+
+$$u(x-h) = u(x) - h u'(x) + \frac{h^2}{2} u''(x) - \frac{h^3}{6} u'''(x) + \frac{h^4}{24} u'''''(x) - \ldots $$
+
+Using these and the *method of undetermined coefficients*, we can
+derive approximations to derivatives:
 
 **Forward difference**:
 $$u'(x) = \frac{u(x+h)-u(x)}{h} + O(h)$$
@@ -92,7 +98,7 @@ A grid in time: $t_n = nk, k > 0$ a fixed **time step**.  Often
 (often in practice $k$ not fixed, and is changed automatically).
 
 The exact solution (usually unknown) is $u(t)$ defined for all
-continuous values of $t$.  We will fine a numerical solution at these
+continuous values of $t$.  We will find a numerical solution at these
 discrete points $v_n \approx u(t_n)$.
 
 
@@ -112,7 +118,7 @@ We are *time-stepping* with the formula
 
 $$v^{n+1} = v^n + k f(t_n,v^n)$$
 
-And this simply the "forward difference" we saw earlier.
+And note this is the "forward difference" we saw earlier.
 Matlab codes: [m02_euler.m], [m03_euler_graph.m].
 
 We often want methods which are more accurate, or more stable, or have
@@ -145,14 +151,15 @@ beware of pendulums!" (pg 100) just has to be good.
   8. Richard von Mises, 1930
 
 
-## Accuracy
+## Methods with smaller errors
 
 Under some assumptions (smooth enough solution) the forward Euler
-method has a global error which behaviors like $Ck$ (notation: $error
+method has a (global) error which behaves like $Ck$ (notation: $error
 = O(k)$).
 
-Roughly speaking if we want 6 digits of accuracy, we need million
-steps.  Often we want more accuracy for less work.  Money for nuthin'!
+Roughly speaking if we want 6 digits of accuracy, we probably need
+about one million steps.  Often we want more accuracy for less work.
+Money for nuthin'!
 
 
 
@@ -245,41 +252,63 @@ syntax.  For info see
 
 
 
-## From local to global error
+## Analysis
 
-We want to compute to $T_f$ (a fixed value, $O(1)$).  This will take $N
-= T_f / k$ steps.  This is $O(1/k)$ steps.
-So to get a global error of $O(k^p)$ we need the local error to be
-$O(k^{k+1})$.
+We would like to understand how the error of these various methods behaves.
 
-The local truncation error is often straightforward to determine:
-Taylor expand the exact solution around $(t_n,u^n)$ and compare terms
-to the numerical method applied from $(t_n,u^n)$.
+Some concepts we will need:
+
+   * consistency and local truncation error
+   * stability
+   * convergence
 
 
-### Consistency example: 2nd-order Adams-Bashforth
+## The local truncation error
+
+Substitute the true solution of the differential equation into the
+discrete problem.  It will not satisfy it exactly: the discrepancy is
+the called the *local truncation error (LTE)*.
+
+symbol: $\tau$
+
+Use Taylor expansions (very similar to the derivation of forward
+difference, etc).  Exact solution unknown, assumed smooth.
+
+Express LTE in "big Oh" notation in $k$.
+
+
+### Consistency
+
+LTE to zero as $k \to 0$.
+
+### example: 2nd-order Adams-Bashforth
 
 $$v^{n+1} = v^n  + \frac{k}{2}(3f^n  - f^{n-1})$$
 
-$u' = f(t,u)$
+To determine the LTE, it is important to write this in a form similar to the DE: $u' = f(t,u)$
 
-Expand each with Taylor: $u(t_n+k)$ and $f(t_n-k)$ (remember $u' = f$):
+$$\frac{v^{n+1} - v^n}{k} = \frac{1}{2}(3f^n  - f^{n-1})$$
+
+Now expand each with Taylor: $u(t_n+k)$ and $f(t_n-k)$ (remember $u' = f$):
 
 $$u(t+k) = u + ku' + (1/2)k^2 u'' + (1/6)k^3 u''' + \ldots$$
 
 $$f(t-k) = u' - ku'' + (1/2)k^2 u''' - \ldots$$
 
+$$\tau = LHS - RHS...$$
+
 Substitute in, find the amount by which the exact solution
 $u(t_{n+1})$ fails to satify the discrete equation:
 
   $$
-  u(t_n+k) - \left(u(t_n) + \frac{k}{2}(3f^n - f^{n-1})\right)
-  = \ldots = -(5/12)k^3 u''' + \ldots
+  \tau = \frac{u(t_n+k) - u(t_n)}{k} \left(\frac{1}{2}(3f^n - f^{n-1})\right)
+  = \ldots = -(5/12)k^2 u''' + \ldots
   $$
 
-So the local truncation error is $O(k^3)$ (so consistency order is $2$).
+So the local truncation error is $\tau = O(k^2)$.  And as this goes to
+zero as $k \to 0$, we can say this method is *consistent*.
 
-## Runge--Kutta
+### Runge--Kutta
 
 Doing this sort of Taylor analysis for RK leads to *order conditions*:
 
@@ -289,12 +318,31 @@ Doing this sort of Taylor analysis for RK leads to *order conditions*:
   >  notation, they can become very elegant."   [Hairer, Wanner, Norsett]
 
 
-## Convergence?
+## Aside: LTE and consistency for ODEs (optional)
 
-Having a small local truncation error isn't sufficient to tell us that
-the sequence actually converges.
+There are two basic contradictory definitions of LTE in the literature
+(oops).  Depends on where you apply the Taylor expansions.  E.g., for forward Euler:
 
-Here's an example of an unstable formula with order 3, try it and see how the computed solutions blow up as $k \to 0$.
+1.  As we did above: apply the Taylor analysis to $\frac{u^{n+1} - u^n}{k} = f(u^n)$.
+    This gives LTE of $O(k)$.
+
+2.  Apply the Taylor analysis to $u^{n+1} = u^n + k f(u^n)$.  This is
+    sometimes called the *one-step error*: under this, LTE is $O(k^2)$.
+    But we apply $O(1/k)$ steps for an estimated/expected global
+    error of $O(k)$.
+
+
+## Stable and unstable methods
+
+Having a small LTE isn't sufficient to tell us that the sequence
+actually converges!  Recall that the method will be used repeatedly:
+an unstable method is one that where each error (from the LTE,
+rounding error or whatever) builds up (e.g., over time).
+
+A stable method is one where small errors are "damped out".
+
+Here's an example of an unstable formula with order 3, try it and see
+how the computed solutions blow up as $k \to 0$.
 
 
    $$v^{n+1}   = -4v^n  + 5v^{n-1}    + k(4f^n  + 2f^{n-1})$$
@@ -306,14 +354,18 @@ consistent... but unstable.]
 [m05_unstab.m: also an example of a non-self-starting method: use
 forward Euler or exact solution, either way still unstable.]
 
-Precisely understanding the global convergence properties requires
-*stability*.
 
+## Convergence
+
+Convergence says the actual overall global error (say at $t = T_f$
+some final time) decreases as $k \to 0$.  This is the property we want.
+
+Intuitively, global convergence requires both consistency and stability.  And in many cases this is enough...
 
 
 ## Fundamental Theorem
 
-... of finite difference methods (or "of numerical analysis"?)
+Fundamental theorem of finite difference methods (or "of numerical analysis"?)
 
   -----------------------------------------
   Consistency + Stability  <=>  Convergence
@@ -419,7 +471,7 @@ Neither is an ideal definition.
 Why it matters: regardless of stiffness, you'll get convergence
 as $k \to 0$   (Dahlquist's original theory).
 
-But the result might be garbage except when $k$ is very small, because
+But the result might be rubbish except when $k$ is very small, because
 of modes $k\lambda$ that aren't in the stability region.
 
 
