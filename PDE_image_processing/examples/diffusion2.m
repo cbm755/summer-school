@@ -1,6 +1,6 @@
 %% Isotropic diffusion for image processing 2
 % Read image and convert to double
-u = double(imread('squares.bmp'));
+u = double(imread('../images/squares.bmp'));
 
 %%
 % Add normal noise with mean 0 and variance 10

@@ -1,7 +1,6 @@
 %% Isotropic diffusion for image processing 3
 % Read image and convert to double
-u = double(imread('lena1.tif'));
-
+u = double(imread('../images/peppersbw.png'));
 %%
 % Add normal noise with mean 0 and variance 10
 u = u + 10.0*randn (size(u));
@@ -16,7 +15,7 @@ title('before');
 
 subplot(2,2,2)
 colormap gray
-plot(u(size(u,1)/2+3,:));
+plot(u(round(size(u,1)/2)+3,:));
 ylabel('u')
 
 %%
@@ -24,7 +23,7 @@ ylabel('u')
 alpha = 0.0;
 beta = 1;
 dt = 0.1;
-u = anisotropic_diffusion(u,dt,alpha,beta,100);
+u = anisotropic_diffusion(u,dt,alpha,beta,20);
 
 %%
 % Display result

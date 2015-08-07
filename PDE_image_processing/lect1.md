@@ -1,6 +1,26 @@
-% Isotropic Diffusion
+% PDEs for Image Processing - CBL Summer School
 % Martin Robinson
 % August 10, 2015
+
+# Image Processing
+
+![](images/modern_image_processing.pdf) 
+
+# PDEs for image processing
+
+- certain image processing operations can be written as solution of partial 
+  differential equations (PDEs)
+- can apply well-developed mathematical techniques to analyse properties and 
+  propose improvements
+- use high performance numerical algorithms to generate solutions
+
+# Diffusion equation = noise removal 
+
+![](images/diffusion_example.png)
+
+# Advection equation = inpainting
+
+![](images/pumpkin.pdf)
 
 # Image Domain
 
@@ -230,3 +250,14 @@ $$
 
 
 
+# The unsharp mask
+
+- image sharpening technique
+- widely used (overused?)
+
+- simplified algorithm:
+    1. Diffuse image $u(x,y,0)$ to obtain $u(x,y,t_1)$
+    2. New image is $u_{new} = u(x,y,0) + (u(x,y,0) - u(x,y,t_1))$ 
+
+- biological motivation: 
+  [http://www.cambridgeincolour.com/tutorials/unsharp-mask.htm](http://www.cambridgeincolour.com/tutorials/unsharp-mask.htm)

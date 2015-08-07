@@ -1,6 +1,6 @@
 %% Isotropic diffusion for image processing 1
 % Read image and convert to double
-u = double(imread('squares.bmp'));
+u = double(imread('../images/peppersbw.png'));
 
 %%
 % Add normal noise with mean 0 and variance 10
@@ -23,7 +23,7 @@ ylabel('u')
 % Run diffusion
 dt = 0.1;
 D = 1;
-u = isotropic_diffusion(u, dt*D, 10);
+u = isotropic_diffusion(u, dt*D, 20);
 
 %%
 % Display result

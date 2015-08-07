@@ -2,7 +2,7 @@
 %
 
 %% Load image
-u = double(imread('squares.tif'));
+u = double(imread('../images/squares.bmp'));
 
 %% Display image
 figure(1)

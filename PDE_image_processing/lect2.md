@@ -1,11 +1,73 @@
-% Anisotropic Diffusion
+% Spatially varying and anisotropic Diffusion
 % Martin Robinson
 % August 11, 2015
 
-# Image Domain
+# Spatially varying diffusion
 
-![Digital image $u_{i,j}$ is a discretised and quantised version of "real" scene 
-$u(x,y)$](images/frog_bw_and_zoom.pdf)
+- Diffusion flux at point $(x,y)$
+
+$$
+J(x,y) = K(x,y)\nabla u
+$$
+
+- Heat equation becomes
+
+\begin{align*}
+u_t &= \nabla \cdot J(x,y), \\
+&= \nabla \cdot (K(x,y) \nabla u).
+\end{align*}
+
+# Spatially varying diffusion - 1D
+
+- In one dimension, this would be
+
+$$
+u_t = (K(x) u_x)_x.
+$$
+
+- A common approach to discretizing this is to use a *forward difference* $D_+^x 
+  \approx u_x$ on the $u_x$ term, evaluate $K(x)$ at the midpoint: 
+  $K(x_{i+\frac{1}{2}})$, and then use a *backwards difference* to calculate the 
+  outside gradient. i.e.
+
+$$
+(K(x) u_x)_x \approx D_-^x(K(x_{i+\frac{1}{2}}) D_+^xu) = ...
+$$
+
+- What is this for constant diffusion $K(x)=K$?
+
+# Spatially varying diffusion - 2D
+
+For two dimensions, the spatially varying heat equation is
+
+$$
+u_t = (K(x,y) u_x)_x + (K(x,y) u_y)_y.
+$$
+
+- this can be discretized in a similar fashion ...
+
+----------------------------------
+
+- If only the nodal values for $K(x,y)$ are known, then a reasonable 
+  approximation is to use the average of two neighbouring grid points
+
+\begin{align*}
+K(x_{i},y_{j+\frac{1}{2}}) &= \frac{1}{2} (K_{i,j+1}+K_{i,j}) \\
+K(x_{i+\frac{1}{2}},y_{j}) &= \frac{1}{2} (K_{i+1,j}+K_{i,j})
+\end{align*}
+
+
+------------------------------------
+
+put it all together with $\Delta x = \Delta y = 1$, this simplifies to
+
+\begin{align*}
+u^{n+1}_{i,j} = &u^{n}_{i,j} + \frac{1}{2}\Delta t (\\
+& (K_{i+1,j}+K_{i,j}) u_{i+1,j}  + (K_{i-1,j}+K_{i,j}) u_{i-1,j} \\
+& (K_{i,j+1}+K_{i,j}) u_{i,j+1}  + (K_{i,j-1}+K_{i,j}) u_{i,j-1} \\
+& - (K_{i+1,j}+K_{i-1,j}+K_{i,j+1}+K_{i,j-1}+4K_{i,j} )u_{i,j})
+\end{align*}
+
 
 # Anisotropic Diffusion
 
@@ -15,7 +77,13 @@ $u(x,y)$](images/frog_bw_and_zoom.pdf)
 - Goal: we wish to reduce diffusion across (or perpendicular) to the edge while 
   keeping normal diffusion along (tangential) to the edge. 
  
-![](images/squares_noise.png)
+![](images/squares_noise.pdf)
+
+
+# New coordinate system near edge
+
+![vector $N$ is normal to the edge and $T$ is 
+tangential](images/tangent_and_normal_directions.pdf)
  
 # New coordinate system near edge
 
@@ -31,10 +99,8 @@ T &= N^\perp = \frac{1}{|\nabla{u}|}\begin{pmatrix} -u_y \\u_x \end{pmatrix}
 to $N$ and $T$.
 
 \begin{align*}
-u_N &= N \cdot \nabla u,\\
-u_{NN} &= N \cdot H(u) N,\\
-u_T &= T \cdot \nabla u,\\
-u_{TT} &= T \cdot H(u) T,\\
+u_N &= N \cdot \nabla u, \qquad u_{NN} = N \cdot H(u) N,\\
+u_T &= T \cdot \nabla u, \qquad u_{TT} = T \cdot H(u) T,\\
 \end{align*}
 
 where $H(u)$ is the hessian matrix of $u$
@@ -102,7 +168,7 @@ u_{xy} &= (u_x)_y \approx D_c^y (D_c^x u)
 
 \begin{align*}
 u_{xx} &\approx D_-^x (D_+^x u) = \frac{u_{i+1,j}-2u_{i,j} +u_{i-1,j}}{\Delta 
-x^2}
+x^2} \\
 u_{yy} &\approx D_-^y (D_+^y u) = \frac{u_{i,j+1}-2u_{i,j} +u_{i,j-1}}{\Delta 
 y^2}
 \end{align*}
@@ -111,96 +177,4 @@ y^2}
 
 **MATLAB code**
 
-# Spatially varying diffusion
-
-- Diffusion flux at point $(x,y)$
-
-$$
-J(x,y) = K(x,y)\nabla u
-$$
-
-- Heat equation becomes
-
-\begin{align*}
-u_t &= \nabla \cdot J(x,y), \\
-&= \nabla \cdot (K(x,y) \nabla u).
-\end{align*}
-
-# Spatially varying diffusion - 1D
-
-- In one dimension, this would be
-
-\begin{align}
-u_t = (K(x) u_x)_x.
-\end{align}
-
-- A common approach to discretizing this is to use a *forward difference* $D_+^x 
-  \approx u_x$ on the $u_x$ term, evaluate $K(x)$ at the midpoint: 
-  $K(x_{i+\frac{1}{2}})$, and then use a *backwards difference* to calculate the 
-  outside gradient. i.e.
-
-\begin{align}
-(K(x) u_x)_x &\approx D_-^x(K(x_{i+\frac{1}{2}}) D_+^xu) = 
-\frac{K(x_{i+\frac{1}{2}})\frac{u_{i+1}-u_{i}}{\Delta x} - 
-K(x_{i-\frac{1}{2}})\frac{u_{i}-u_{i-1}}{\Delta x}}{\Delta x} \\
-&\approx \frac{ K(x_{i+\frac{1}{2}}) u_{i+1} - 
-(K(x_{i+\frac{1}{2}})+K(x_{i-\frac{1}{2}}))u_{i} + 								
-K(x_{i-\frac{1}{2}}) u_{i-1} }{\Delta x^2}
-\end{align}
-
-- What is this for constant diffusion $K(x)=K$?
-
-# Spatially varying diffusion - 2D
-
-For two dimensions, the spatially varying heat equation is
-
-$$
-u_t = (K(x,y) u_x)_x + (K(x,y) u_y)_y.
-$$
-
-- this can be discretized in a similar fashion to give 
-
-\begin{align}
-(K(x,y) u_x)_x &\approx \frac{ K(x_{i+\frac{1}{2}},y_j) u_{i+1,j} - 
-(K(x_{i+\frac{1}{2}},y_j)+K(x_{i-\frac{1}{2}},y_j))u_{i,j} + 								
-K(x_{i-\frac{1}{2}},y_j) u_{i-1,j} }{\Delta x^2} \\
-(K(x,y) u_y)_y &\approx \frac{ K(x_{i},y_{j+\frac{1}{2}}) u_{i,j+1} 
--(K(x_{i},y_{j+\frac{1}{2}})+K(x_{i},y_{j-\frac{1}{2}}))u_{i,j} + 								
-K(x_{i},y_{j-\frac{1}{2}}) u_{i,j-1} }{\Delta y^2} \\
-u_t &\approx \frac{u^{n+1} - u^n}{\Delta t}.
-\end{align}
-
-----------------------------------
-
-- If only the nodal values for $K(x,y)$ are known, then a reasonable 
-  approximation is to use the average of two neighbouring grid points
-
-\begin{align}
-K(x_{i},y_{j+\frac{1}{2}}) &= \frac{1}{2} (K_{i,j+1}+K_{i,j}) \\
-K(x_{i+\frac{1}{2}},y_{j}) &= \frac{1}{2} (K_{i+1,j}+K_{i,j})
-\end{align}
-
-
-------------------------------------
-
-- Which results in 
-
-\begin{align}
-(K(x,y) u_x)_x &\approx \frac{ (K_{i+1,j}+K_{i,j}) u_{i+1,j} - 
-			    ( (K_{i+1,j}+2K_{i,j}+K_{i-1,j}))u_{i,j} + 								 (K_{i-1,j}+K_{i,j}) u_{i-1,j} }{2\Delta x^2} \\
-(K(x,y) u_y)_y &\approx \frac{ (K_{i,j+1}+K_{i,j}) u_{i,j+1} - 
-			    ( (K_{i,j+1}+2K_{i,j}+K_{i,j-1}))u_{i,j} + 								 (K_{i,j-1}+K_{i,j}) u_{i,j-1} }{2\Delta y^2} \\
-u_t &\approx \frac{u^{n+1} - u^n}{\Delta t}.
-\end{align}
-
-------------------------------------
-
-For $\Delta x = \Delta y = 1$ this simplifies to
-
-\begin{align}
-u^{n+1}_{i,j} = &u^{n}_{i,j} + \frac{1}{2}\Delta t (\\
-& (K_{i+1,j}+K_{i,j}) u_{i+1,j}  + (K_{i-1,j}+K_{i,j}) u_{i-1,j} \\
-& (K_{i,j+1}+K_{i,j}) u_{i,j+1}  + (K_{i,j-1}+K_{i,j}) u_{i,j-1} \\
-& - (K_{i+1,j}+K_{i-1,j}+K_{i,j+1}+K_{i,j-1}+4K_{i,j} )u_{i,j})
-\end{align}
 

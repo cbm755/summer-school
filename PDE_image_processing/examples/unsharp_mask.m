@@ -2,7 +2,7 @@
 %
 
 %% Load image
-u = double(imread('monarch.tif'));
+u = double(imread('../images/monarch.jpg'));
 
 %% Display image
 figure(1)
