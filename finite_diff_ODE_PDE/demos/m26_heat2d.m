@@ -17,7 +17,7 @@ x = xx(:); y = yy(:);
 u = double( ...
     (abs(x-.5)<.4 & abs(y-.5)<.07) | (abs(x-.5)<.07 & abs(y-.5)<.4));
 
-% The matrix B:
+% The matrix L in 1D:
 N = length(s);  e = ones(N,1);
 L1d = spdiags([e  -2*e  e], [-1 0 1], N, N);
 L1d(1, end) = 1;  L1d(end, 1) = 1;  % periodic BCs
