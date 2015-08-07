@@ -1,5 +1,5 @@
-Lecture 7: PDEs in higher dimensions
-====================================
+Lecture 7: PDEs in higher dimensions (not examinable)
+=====================================================
 
 
 ## Advection
@@ -26,8 +26,8 @@ The numerics are a bit different too: this code uses "upwinding"
 finite differences which are appropriate for advection-dominited
 problems, but we haven't talked about them in this course.
 
-But we do want to look more carefully about constructing the matrices
-in this code...
+But we could look more carefully about constructing the matrices in
+this code...
 
 
 ## Heat equation
