@@ -1,4 +1,4 @@
-Lecture 6: Finite differences and PDES
+Lecture 6: Finite differences and PDEs
 ======================================
 
 ## Partial Differential Equations (PDEs)
@@ -140,23 +140,24 @@ Or using $v(t)$ as $N$-vector:
                            |                     |
                            |              1   -2 |
 
-Let's call this matrix $L$ (with the $\frac{1}{h^2}$ factor).
+Let's call this matrix $L$ (incl. $\frac{1}{h^2}$ factor) so that
+$\frac{d}{dt} v(t) = L v(t)$.
 If we then discretize time with forward Euler we get:
 
 
-                           |-2    1              |  |  n |
-                           |                     |  | v  |
-                           | 1   -2    1         |  |  1 |
-                           |                     |  |    |
-      n+1    n             |    .    .   .       |  | .  |
-     v    = v  + k * 1/h^2 |     .    .   .      |  | .  |
-                           |      .    .   .     |  | .  |
-                           |                     |  |    |
-                           |         1   -2    1 |  |  n |
-                           |                     |  | v  |
-                           |              1   -2 |  |  N |
+                              |-2    1              |  |  n |
+                              |                     |  | v  |
+                              | 1   -2    1         |  |  1 |
+                              |                     |  |    |
+         n+1    n             |    .    .   .       |  | .  |
+        v    = v  + k * 1/h^2 |     .    .   .      |  | .  |
+                              |      .    .   .     |  | .  |
+                              |                     |  |    |
+                              |         1   -2    1 |  |  n |
+                              |                     |  | v  |
+                              |              1   -2 |  |  N |
 
-Where $v^{n+1}$ represents the discrete vector of solution at time $t_{n+1}$:
+where $v^{n+1}$ represents the discrete vector of solution at time $t_{n+1}$:
 
 $$v^{n+1} \approx v(t_{n+1}).$$
 
@@ -214,7 +215,7 @@ Note that these are all happening on different scales, which need not
 be tied to one another.  Notably the PDE is a continuum model of what
 molecules do.  We then discretize this to solve a discrete problem on
 a grid on the computer, but this grid has little (or nothing) to do
-with the molecular scaler.
+with the molecular scale.
 
 
 ## Nonlinear PDE
@@ -241,7 +242,7 @@ Note we have "nonhomogeneous" BCs $u(0) = 1$, $u(20) = 0$; the former is impleme
 
 \begin{small}
 \begin{verbatim}
-                    +--                                                        --+
+                    +--                                                          --+
                     |         |-2   1            |  |  n |     |1/h^2|             |
                     |         |                  |  | v  |     |     |             |
                     |         | 1  -2   1        |  |  1 |     |  0  |             |
@@ -253,8 +254,8 @@ Note we have "nonhomogeneous" BCs $u(0) = 1$, $u(20) = 0$; the former is impleme
                     |         |       1   -2   1 |  |  n |     |     |             |
                     |         |                  |  | v  |     |     |             |
                     |         |            1  -2 |  |  N |     |  0  |             |
-                    +--                                                        --+
-                                                               BC
+                    +--                                                          --+
+                                                                 BC
 \end{verbatim}
 \end{small}
 
@@ -274,6 +275,7 @@ How to discretize?  Think $(u_{xx})_{xx}$..., this leads, eventually, to
   $$v^{n+1}_j = v^n_j - \frac{k}{h^4} \left(
     v^n_{j-2}  - 4v^n_{j-1}  + 6v^n_j  - 4v^n_{j+1}  + v^n_{j+2}
   \right)$$
+or
   $$\frac{d}{dt} v_j = \frac{1}{h^4} \left(
     v_{j-2}  - 4v_{j-1}  + 6v_j  - 4v_{j+1}  + v_{j+2}
   \right)$$
@@ -348,7 +350,7 @@ the original right-hand-side of the PDE.
 magnitude' eigenvalues of the *discretized* biharmonic operator: need
 $k$ times these less than 2 for forward Euler stability.  Note this
 gives almost the same restriction as observed in practice (and
-calulated with von Neumann analysis)
+calculated with von Neumann analysis)
 
 
 ### Implicit methods for PDEs
@@ -409,16 +411,17 @@ and $h$ (in Figures 2 and 3) but these may not (and here do not)
 expose the truncation of the spatial and temporal schemes separately.
 
 
-## Local Truncation Error
+## Local Truncation Error (again, for PDEs now)
 
-$$v^{n+1}_j - u(x_j,t_{n+1})$$ where $u$ is smooth solution and
-$v^{n+1}$ is computed from exact values for $v^n_j$, $v^{n-1}_j$ etc.
+As for ODEs, substitute equation solution into the descrete method
+and see what is left over.  Example backward Euler applied to heat equation:
+
+$$\frac{v^{n+1}_j  -  v^n_j}{k}  =  \frac{v^{n+1}_{j+1} - 2v^{n+1}_j + v^{n+1}_{j-1}}{h^2}.$$
+
 
 * Replace $v_j^{n-1}$ by Taylor series for equiv. value of $u$.
 
 * Cancel terms to find local truncation error.
-
-* Divide by one power of $k$ to find global accuracy.
 
 We often (try to) separate $h$ and $k$ dependences and talk about,
 e.g., $O(k) + O(h^2)$ accuracy.  First-order accurate in time and
@@ -435,7 +438,7 @@ Taylor:
 
 And 2D Taylor gives
 
-$$u(x_{j+1},t^{n+1}) =
+$$u(x_{j \pm 1},t^{n+1}) =
        u
        \pm hu_x + ku_t
        + \frac{h^2}{2} u_{xx} + \frac{k^2}{2} u_{tt} \pm hku_{xt}
@@ -446,19 +449,11 @@ $$
 Now compute the LHS and RHS of the backward Euler method.
 Then we have:
 
-$$ LHS - RHS = k u_t - k u_{xx} + k^2/2 u_{tt} + kh^2/12 u_{xxxx} + \ldots$$
+$$ LHS - RHS = u_t - u_{xx} + k/2 u_{tt} + h^2/12 u_{xxxx} + \ldots$$
 
 But $u_t = u_{xx}$ so we have the local truncation error is 
 
-$$ O(k^2) + O(kh^2)$$
-
-And thus the global error is
-
 $$ O(k) + O(h^2)$$
-
-
-
-
 
 (advanced: there is some subtly about $h$ and $k$: we assumed $k =
 O(h)$ in this derivation\ldots)

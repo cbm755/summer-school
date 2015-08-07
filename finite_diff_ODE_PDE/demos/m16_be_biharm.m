@@ -37,7 +37,7 @@ A = I - k*H;
 for n = 1:numsteps
   %unew = u + k*(H*u);     %forward euler
   %unew = u + k*(H*unew);  %backward euler
-  unew = A \ u;
+  unew = A \ u;      % "magic" numerical linear alg
   u = unew;
   t = n*k;
   set(plt,'ydata',u)
