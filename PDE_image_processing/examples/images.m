@@ -11,8 +11,8 @@
 %  
 % The return value A is an uint8 array containing the image data.
 
-u_int8_gray = imread('lena1.bmp');
-u_int8_color = imread('lena3.tif');
+u_int8_gray = imread('../images/peppersbw.png');
+u_int8_color = imread('../images/peppers.png');
 
 
 %% Display image

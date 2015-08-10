@@ -25,7 +25,7 @@
 %\usepackage[small,compact]{titlesec}
 %\usepackage[small]{titlesec}
 \usepackage{multicol}
-\usepackage{xcolor}
+%\usepackage{xcolor}
 \usepackage{verbatim}
 \usepackage{xspace}
 
@@ -34,10 +34,10 @@
 \newcommand{\shf}{\frac{1}{2}}
 \newcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
 
-\definecolor{darkred}{rgb}{.5,0,0}
-\definecolor{darkblue}{rgb}{0,0,0.3}
-\definecolor{grey}{rgb}{0.6,0.6,0.6}
-\usepackage[colorlinks=true,citecolor=darkblue,urlcolor=blue,linkcolor=darkred]{hyperref}
+%\definecolor{darkred}{rgb}{.5,0,0}
+%\definecolor{darkblue}{rgb}{0,0,0.3}
+%\definecolor{grey}{rgb}{0.6,0.6,0.6}
+%\usepackage[colorlinks=true,citecolor=darkblue,urlcolor=blue,linkcolor=darkred]{hyperref}
 \usepackage{url}
 \usepackage{fancyvrb}
 
@@ -155,11 +155,14 @@ varying the diffusion coefficient across the image dependent on the image gradie
 %and structures that should be preserved in the image.
 The general equation is
 $$u_t = \nabla \cdot \big( g(|\nabla u|) \nabla u \big),
-\qquad \text{where} \qquad
-g(s) = \frac{1}{1+\frac{s^2}{\lambda^2}}$$
-is an edge detection function with a tunable parameter $\lambda$ that
+$$
+where $g(s)$ is an edge detection function with a tunable parameter $\lambda$ that
 controls the sensitivity of the equation to visual edges.  It gives a
-threshold to separate noise from edges.
+threshold to separate noise from edges. Two such functions proposed by Perona \& Malik were
+
+$$
+g(s) = \frac{1}{1+\frac{s^2}{\lambda^2}} \qquad \text{or} \qquad g(s) = \exp \left [-\frac{s^2}{\lambda^2} \right ].
+$$
 
 %TODO: give them some code.
 
@@ -203,7 +206,7 @@ differences
 
 Use the code from the github repository which loads the image and adds
 noise.  Write a code to perform Perona--Malik denoising, using zero-Neumann boundary conditions for $u$. How does this set the boundary conditions for $g(|\nabla u|)$? Assuming you choose to make $\Delta x = 1$, then you might start with $\Delta t = 0.1$
-and $\lambda = 5$. What happens to the diffusion near the edges? What happens to the image as you increase $t$?
+and $\lambda = 5$. What happens to the diffusion near the edges? What happens to the image as you increase $t$? Try using both options for $g(s)$, are there any differences in the results?
 
 Optional: try working with the full colour image.  One approach is to
 work on each colour channel separately, although maybe R-G-B is not
